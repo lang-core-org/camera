@@ -290,18 +290,19 @@
         }
 
         function init(canvas,info,horizon,help){
-            navigator.mediaDevices.getUserMedia(
-                {
-                    audio:false,
-                    video:{
-                        width:{ ideal:3840 },
-                        height:{ ideal:2160 },
-                        facingMode:{ exact:"environment" }
-                    }
-                }
+            get_full_environment_camera_for(
+                (
+                    track_full,
+                    width_full,
+                    height_full
+                ) => fcamera(
+                    track_full,
+                    width_full,
+                    height_full,
+                    canvas,
+                    horizon
+                )
             ).then(
-                (stream) => maxsize_stream(stream,canvas,horizon)
-        ).then(
                 (tools) => {
                     let c = new rAF(tools,info,canvas);
 
@@ -366,95 +367,64 @@ or click right to cancel.`
 
         }
 
-        function maxsize_stream(stream,canvas,horizon){
-            let track = stream.getVideoTracks()[0];
-            let cap = track.getCapabilities();
-            let cwidth = cap.width?.max;
-            let cheight = cap.height?.max;
-            let czoom = 1.0;
-            if(
-                cwidth !== undefined &&
-                cheight !== undefined
-            ){
-                stream.getTracks().forEach(t => t.stop());
-                
-                return navigator.mediaDevices.getUserMedia(
-                    {
-                        audio:false,
-                        video:{
-                            width:{ exact: cwidth },
-                            height:{ exact: cheight },
-                            facingMode:{ exact:"environment" }
-                        }
-                    }
-                ).then(
-                    (stream_full) => {
-                        let track_full = stream_full.getVideoTracks()[0];
-                        return track_full.applyConstraints(
-                            {
-                                advanced: [{
-                                    zoom: czoom,
-                                    whiteBalanceMode: "continuous",
-                                    exposureMode: "continuous",
-                                    focusMode: "continuous"
-                                }]
+        function fcamera(
+            track_full,
+            width_full,
+            height_full,
+            canvas,
+            horizon
+        ){
+            gpu.of(
+                canvas,
+                width_full,
+                height_full
+            ).then(
+                (render) => {
+                    let imgc = new ImageCapture(track_full);
+                    let draw_2d = direct.draw(render);
+                    let draw_3d = dubois.anaglyph(render);
+                    /* [Horizon Interface]
+                        Horizon.display_with(svg_element)
+                        create Horizon instance, associate display with svg_element
+                    */
+                    let horizon_proc = Horizon.display_with(horizon);
+                    return {
+                        gFrame: (f)  => imgc.grabFrame().then(f).catch(
+                            (err) => {
+                                alert(`Cannot Capture an Image from the Camera, due to:\n${err}`);
                             }
-                        ).then(
-                            () => gpu.of(canvas,cwidth,cheight)
-                        ).then(
-                            (render) => {
-                                let imgc = new ImageCapture(track_full);
-                                let draw_2d = direct.draw(render);
-                                let draw_3d = dubois.anaglyph(render);
-                                /* [Horizon Interface]
-                                   Horizon.display_with(svg_element)
-                                   create Horizon instance, associate display with svg_element
-                                */
-                                let horizon_proc = Horizon.display_with(horizon);
-                                return {
-                                    gFrame: (f)  => imgc.grabFrame().then(f).catch(
-                                        (err) => {
-                                            alert(`Cannot Capture an Image from the Camera, due to:\n${err}`);
-                                        }
-                                    ),
-                                    preview_2d: draw_2d,
-                                    preview_3d: draw_3d,
-                                    /* [Horizon Interface]
-                                       Horizon::expect_locked(expect_what)
-                                       expect_what === true: 
-                                            expect to locked nearest device orientation as horizon,
-                                            then tracking and prompt to keep it
-                                       expect_what === false: 
-                                            unlocked horizon
-                                       note: 
-                                       expect_what is bool
-                                    */
-                                    horizon_expect_locked: (expect_what) => horizon_proc.expect_locked(expect_what),
-                                    /* [Horizon Interface]
-                                       Horizon::update_rotation_transform()
-                                       update rotation transform due to screen orientation change
-                                    */
-                                    horizon_update_rotation_transform: () => horizon_proc.update_rotation_transform(),
-                                    /* [Horizon Interface]
-                                       Horizon::unable_show()
-                                       unable to show horizon, means hide horizon
-                                    */
-                                    horizon_unable_show: () => horizon_proc.unable_show(),
-                                    /* [Horizon Interface]
-                                       Horizon::enable_show()
-                                       enable to show horizon, means show horizon if available
-                                    */
-                                    horizon_enable_show: () => horizon_proc.enable_show()
-                                };
-                            }
-                        );
-                    }
-                );     
-            }else{
-                return Promise.reject(
-                    "Failed apply constraints to the video stream from camera"
-                );
-            }
+                        ),
+                        preview_2d: draw_2d,
+                        preview_3d: draw_3d,
+                        /* [Horizon Interface]
+                            Horizon::expect_locked(expect_what)
+                            expect_what === true:
+                                 expect to locked nearest device orientation as horizon,
+                                 then tracking and prompt to keep it
+                            expect_what === false:
+                                 unlocked horizon
+                            note: 
+                                 expect_what is bool
+                        */
+                        horizon_expect_locked: (expect_what) => horizon_proc.expect_locked(expect_what),
+                        /* [Horizon Interface]
+                            Horizon::update_rotation_transform()
+                            update rotation transform due to screen orientation change
+                        */
+                        horizon_update_rotation_transform: () => horizon_proc.update_rotation_transform(),
+                        /* [Horizon Interface]
+                            Horizon::unable_show()
+                            unable to show horizon, means hide horizon
+                        */
+                        horizon_unable_show: () => horizon_proc.unable_show(),
+                        /* [Horizon Interface]
+                            Horizon::enable_show()
+                            enable to show horizon, means show horizon if available
+                        */
+                        horizon_enable_show: () => horizon_proc.enable_show()
+                    };
+                }
+            );
         }
 
         function keep_wake(){
@@ -481,6 +451,7 @@ or click right to cancel.`
         }
         
     </script>
+    <script src="camera.js"></script>
     <script src="gpu.js"></script>
     <script src="horizon.js"></script>
     <style>
