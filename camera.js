@@ -2,7 +2,7 @@
 ftrack(track_full,width_full,height_full) => ???
 */
 function get_full_environment_camera_for(ftrack){
-    navigator.mediaDevices.getUserMedia(
+    return navigator.mediaDevices.getUserMedia(
         {
             audio:false,
             video:{
