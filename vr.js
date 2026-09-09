@@ -23,8 +23,7 @@ class vr{
                 {
                     alpha: false,
                     colorSpace: "display-p3",
-                    colorType: "float16",
-                    desynchronized: true
+                    colorType: "float16"
                 }
             ) ?? null;
             if(this.#context === null){
