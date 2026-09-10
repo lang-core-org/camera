@@ -50,11 +50,26 @@
             left: env(safe-area-max-inset-left, 0px);
             background-color: red;
       }
+      canvas{
+            width: 100%;
+            height:100%;
+            background-color:skyblue;
+      }
+      @media (orientation: portrait) {
+            canvas {
+                  display: none;
+            }
+      }
+      @media (orientation: landscape) {
+            canvas {
+                  display: block;
+            }
+      }
 </style>
 </head>
 <body onload="f()">
    <div>
-         
+         <canvas></canvas>
    </div>
 </body>
 </html>
