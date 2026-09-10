@@ -37,32 +37,42 @@
       }
 </script>
 <style>
-      body,::backdrop{
+      ::backdrop{
             width: 100dvw;
             height: 100dvh;
             background-color: green;
       }
       div{
             position: fixed;
-            top: env(safe-area-max-inset-top, 0px); 
-            right: env(safe-area-max-inset-right, 0px);
-            bottom: env(safe-area-max-inset-bottom, 0px);
-            left: env(safe-area-max-inset-left, 0px);
             background-color: red;
       }
+      
       canvas{
             width: 100%;
             height:100%;
             background-color:skyblue;
       }
       @media (orientation: portrait) {
+            div{   
+                  top: 0px;
+                  right:0px;
+                  bottom: 0px;
+                  left: 0px;      
+            }
             canvas {
-                  display: none;
+                  visibility: hidden;
             }
       }
       @media (orientation: landscape) {
+            div{
+                  top: env(safe-area-max-inset-top, 0px);
+                  right: env(safe-area-max-inset-right, 0px);
+                  bottom: env(safe-area-max-inset-bottom, 0px);
+                  left: env(safe-area-max-inset-left, 0px);
+                  background-color: red;
+            }
             canvas {
-                  display: block;
+                  visibility: visible;
             }
       }
 </style>
