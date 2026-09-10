@@ -9,10 +9,15 @@
                user-scalable=no"
 >
 <title>VR</title>
+<script>
+      function f(){
+            ScreenOrientation.lock("landscape");
+      }
+</script>
 <style>     
 </style>
 </head>
-<body>
+<body onload="f()">
    <input id= "ctrl" type="range"/>
 </body>
 </html>
