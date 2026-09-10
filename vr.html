@@ -54,13 +54,14 @@
       }
 </script>
 <style>
-      ::backdrop{
+      body{
             width: 100dvw;
             height: 100dvh;
-            background-color: green;
-      }
-      body{
             touch-action: none;
+      }
+
+      div::backdrop{
+            background-color: green;
       }
       div{
             position: fixed;
