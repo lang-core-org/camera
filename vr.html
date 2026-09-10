@@ -13,26 +13,27 @@
 <title>VR</title>
 <script>
       function f(){
-            document.body.addEventListener(
-                  "click",
-                  keep_wake,
-                  {once: true}
+            screen.orientation.addEventListener(
+                  "change",
+                  (e) => keep_wake()
             );
       }
       function keep_wake(){
-            document.body.requestFullscreen().then(
-                  (und) => navigator.wakeLock.request('screen').then(
-                        (wake_lock) => wake_lock.addEventListener(
-                              "release",
-                              (e) => keep_wake(),
-                              { once: true }
-                        )
-                  )
-            ).catch(
-                  (e) => {
-                        alert(e);
-                  }
-            );  
+            let type = screen.orientation?.type ?? "";
+            if( type.startsWith("landscape") === true ){
+                document.body.requestFullscreen();
+            }else{
+                document.exitFullscreen();
+            }
+            navigator.wakeLock
+                .request('screen')
+                .then(
+                    (wake_lock) => wake_lock.addEventListener(
+                        "release",
+                        (e) => keep_wake(),
+                        { once: true }
+                    )
+                );
       }
 </script>
 <style>
@@ -52,6 +53,8 @@
 </style>
 </head>
 <body onload="f()">
-   <div></div>
+   <div>
+         
+   </div>
 </body>
 </html>
