@@ -38,17 +38,22 @@
       }
 </script>
 <style>
-      #ctrl{
+      body{
+            width: 100dvw;
+            height: 100dvh;
+            background-color: green;
+      }
+      canvas{
             position: fixed;
-            left: 0dvw;
-            top: 100dvh;
-            width: 100dvh;
-            transform: translate(-50%,-50%) rotate(-90deg);
+            top: env(safe-area-max-inset-top); 
+            right: env(safe-area-max-inset-right);
+            bottom: env(safe-area-max-inset-bottom);
+            left: env(safe-area-max-inset-left);
+            background-color: black;
       }
 </style>
 </head>
 <body onload="f()">
-   <input id= "ctrl" type="range"/>
-      Click To Beign VR
+   <canvas></canvas>
 </body>
 </html>
