@@ -11,7 +11,28 @@
 <title>VR</title>
 <script>
       function f(){
-            screen.orientation.lock("landscape");
+            document.body.addEventListener(
+                  "click",
+                  keep_wake,
+                  {once: true}
+            );
+      }
+      function keep_wake(){
+            document.body.requestFullscreen().then(
+                  (und) => screen.orientation.lock("landscape")
+            ).then(
+                  (und) => navigator.wakeLock.request('screen').then(
+                        (wake_lock) => wake_lock.addEventListener(
+                              "release",
+                              (e) => keep_wake(),
+                              { once: true }
+                        )
+                  )
+            ).catch(
+                  (e) => {
+                        alert(e);
+                  }
+            );  
       }
 </script>
 <style>
@@ -22,5 +43,6 @@
 </head>
 <body onload="f()">
    <input id= "ctrl" type="range"/>
+      Click To Beign VR
 </body>
 </html>
