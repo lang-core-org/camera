@@ -50,7 +50,7 @@ class vr{
                 this.#x_start
             );
         }else{
-            throw New Error("d_right_plus required Integer");
+            throw new Error("d_right_plus required Integer");
         }
     }
     
