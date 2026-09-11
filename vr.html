@@ -88,9 +88,28 @@
       @media (orientation: landscape) {
             div{
                   top: env(safe-area-max-inset-top, 0px);
-                  right: env(safe-area-max-inset-right, 0px);
+                  --side-inset-raw: max(
+                        env(safe-area-max-inset-left, 0px),
+                        env(safe-area-max-inset-right, 0px)
+                  );
+                  --side-inset: calc(
+                        sign(
+                              abs(
+                                    var(--side-inset-raw)
+                              )
+                        ) * var(--side-inset-raw) +
+                        (
+                              1 - 
+                              sign(
+                                    abs(
+                                          var(--side-inset-raw)
+                                    )
+                              )
+                        ) * (64px)
+                  );
+                  right: var(--side-inset);
                   bottom: env(safe-area-max-inset-bottom, 0px);
-                  left: env(safe-area-max-inset-left, 0px);
+                  left: var(--side-inset);
                   background-color: red;
             }
             canvas {
