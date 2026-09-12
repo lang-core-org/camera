@@ -47,7 +47,7 @@
                         (e) => {
                               if(this.#render === rAF.#stream){
                                     this.#vr.d_right_plus(
-                                          Math.trunc(-e.movementY) * 64
+                                          Math.trunc(-e.movementY)
                                     );
                               }else{
                                     //pass
@@ -133,7 +133,7 @@
 <script src="camera.js"></script>
 <script src="vr.js"></script>
 <style>
-      ::backdrop{
+      ::backdrop,body{
             background-color: green;
       }
       html,body{
