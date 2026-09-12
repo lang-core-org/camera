@@ -6,7 +6,7 @@ class vr{
     #height;
     #half_width;
     #x_start;
-    #d_right;
+    #d_right; //841
 
     constructor(canvas,width,height){
         this.#width = width;
