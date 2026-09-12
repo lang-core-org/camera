@@ -77,24 +77,14 @@ class vr{
                         this.#half_width, 0, 
                         this.#half_width, this.#height
                     );
-
-
-                    //draw d_right value on top
-                this.#context.font = "48px monospace";
-                this.#context.fillStyle = "#0f0";
-                this.#context.fillText(
-                    `d_right: ${this.#d_right}`,
-                    20, 60
-                );
-
-
+                    return Promise.reslove();
                     
                 }else{
-                    throw new Error("unable to draw right");
+                    return Promise.reject("unable to draw right");
                 }
             };
         }else{
-            throw new Error("unable to draw left");
+            return Promise.reject("unable to draw left");
         }
     }
 }
