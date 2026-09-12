@@ -23,6 +23,7 @@
                   it.#gFrame(
                         (img) => {
                               it.#vr.draw(img)(img);
+                              img.close();
                               it.#next_render();
                         }
                   );
