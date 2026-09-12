@@ -22,7 +22,7 @@
             static #stream(it){
                   it.#gFrame(
                         (img) => {
-                              if(it.#render === rAF.#stream){
+                              if(it.#render === rAF.#stream){ //deprecated
                                     it.#vr.draw(img)(img);
                               }else{
                                     //pass
@@ -47,7 +47,7 @@
                         (e) => {
                               if(this.#render === this.#stream){
                                     this.#vr.d_right_plus(
-                                          Math.trunc(-e.movementY)
+                                          Math.trunc(-e.movementY) * 64
                                     );
                               }else{
                                     //pass
