@@ -15,7 +15,7 @@
       class rAF{
             #vr = null;
             #gFrame = null;
-            #render;
+            #render = rAF.#nop;
             static #nop(it){}
             static #stream(it){
                   it.#gFrame(
@@ -43,17 +43,11 @@
                         }
                   );
 
-
-
-
-
-
-
-
-                  
-                  requestAnimationFrame(
-                        () => this.#render(this)
-                  );
+                  let frender = () => {
+                        this.#render(this);
+                        requestAnimationFrame(frender);
+                  };
+                  requestAnimationFrame(frender);
             }
             
             #forientation(canvas){
