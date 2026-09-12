@@ -11,8 +11,8 @@ class vr{
     constructor(canvas,width,height){
         this.#width = width;
         this.#height = height;
-        this.#half_width = this.#width / 2;
-        this.#x_start = this.#half_width / 2;
+        this.#half_width = (this.#width / 4) * 3;
+        this.#x_start = this.#width / 8;
         this.#d_right = this.#x_start; //suggest value
         if(
             Number.isInteger(this.#width) === false ||
@@ -34,7 +34,7 @@ class vr{
             if(this.#context === null){
                 throw new Error("unsupported canvas 2d!");
             }else{
-                this.#canvas.width = this.#width;
+                this.#canvas.width = this.#half_width * 2;
                 this.#canvas.height = this.#height;
             }
         }
