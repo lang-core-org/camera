@@ -16,8 +16,12 @@
             #vr = null;
             #gFrame = null;
             #render;
-            static nop(it){}
-            static stream(it){}
+            static #nop(it){}
+            static #stream(it){
+                  this.#gFrame(
+                        (img) => this.#vr.draw(img)(img)
+                  );
+            }
 
 
 
@@ -28,10 +32,30 @@
             
             constructor(canvas){
                   this.#forientation(canvas);
+                  
                   screen.orientation.addEventListener(
                         "change",
                         (e) => this.#forientation(canvas)
                   );
+                  document.body.addEventListener(
+                        "pointermove",
+                        (e) => {
+                              if(this.#render === this.#stream){
+                                    this.#vr.d_right_plus(-e.movementY);
+                              }else{
+                                    //pass
+                              }
+                        }
+                  );
+
+
+
+
+
+
+
+
+                  
                   requestAnimationFrame(
                         () => this.#render(this)
                   );
@@ -58,12 +82,12 @@
                                                             alert(`Cannot Capture an Image from the Camera, due to:\n${err}`);
                                                       }
                                                 );
-                                          this.#render = rAF.stream;
+                                          this.#render = rAF.#stream;
                                           }catch(e){
                                                 track_full.stop();
                                                 this.#vr = null;
                                                 this.#gFrame = null;
-                                                this.#render = rAF.nop;
+                                                this.#render = rAF.#nop;
                                                 throw e;
                                           }
                                     }
@@ -73,12 +97,12 @@
                                     }
                               );
                         }else{
-                              this.#render = rAF.stream;
+                              this.#render = rAF.#stream;
                         }
                         document.body.requestFullscreen();
                   );
                   }else{
-                        this.#render = rAF.nop;
+                        this.#render = rAF.#nop;
                         document.exitFullscreen();
                   }
             }
@@ -91,12 +115,6 @@
             canvas.addEventListener(
                   "pointermove",
                   (e) => e.stopPropagation()
-            );
-            document.body.addEventListener(
-                  "pointermove", 
-                  (e) => {
-                        const dy = -e.movementY;
-                  }
             );
       }
       
