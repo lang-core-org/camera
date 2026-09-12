@@ -42,7 +42,9 @@
                         "pointermove",
                         (e) => {
                               if(this.#render === this.#stream){
-                                    this.#vr.d_right_plus(-e.movementY);
+                                    this.#vr.d_right_plus(
+                                          Math.trunc(-e.movementY)
+                                    );
                               }else{
                                     //pass
                               }
