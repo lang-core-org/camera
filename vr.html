@@ -12,6 +12,9 @@
 >
 <title>VR</title>
 <script>
+      class rAF{
+            #vrs;
+      }
       function init(canvas){
             screen.orientation.addEventListener(
                   "change",
@@ -21,38 +24,38 @@
                   "pointermove",
                   (e) => e.stopPropagation()
             );
-            const ctx = canvas.getContext("2d");
+            screen.orientation.addEventListener(
+                  "change",
+                  (e) => keep_wake(canvas)
+            );
             document.body.addEventListener(
                   "pointermove", 
                   (e) => {
-                        const dx = e.movementX;
-                        const dy = e.movementY;
-
-                        ctx.clearRect(0, 0, canvas.width, canvas.height);
-                        ctx.font = "30px sans-serif";
-                        ctx.fillStyle = "black";
-                        ctx.fillText(`dy: ${dy}`, 20, 40);
+                        const dy = -e.movementY;
                   }
             );
       }
-      function keep_wake(){
+      function foo(canvas){
             let type = screen.orientation?.type ?? "";
             if( type.startsWith("landscape") === true ){
                 document.body.requestFullscreen();
             }else{
                 document.exitFullscreen();
             }
-            navigator.wakeLock
-                .request('screen')
-                .then(
-                    (wake_lock) => wake_lock.addEventListener(
+      }
+      
+      function keep_wake(){
+            navigator.wakeLock.request('screen').then(
+                  (wake_lock) => wake_lock.addEventListener(
                         "release",
                         (e) => keep_wake(),
                         { once: true }
-                    )
-                );
+                  )
+            );
       }
 </script>
+<script src="camera.js"></script>
+<script src="vr.js"></script>
 <style>
       ::backdrop{
             background-color: green;
