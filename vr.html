@@ -13,7 +13,75 @@
 <title>VR</title>
 <script>
       class rAF{
-            #vrs;
+            #vr = null;
+            #gFrame = null;
+            #render;
+            static nop(it){}
+            static stream(it){}
+
+
+
+
+
+
+
+            
+            constructor(canvas){
+                  this.#forientation(canvas);
+                  screen.orientation.addEventListener(
+                        "change",
+                        (e) => this.#forientation(canvas)
+                  );
+                  requestAnimationFrame(
+                        () => this.#render(this)
+                  );
+            }
+            
+            #forientation(canvas){
+                  let type = screen.orientation?.type ?? "";
+                  if( type.startsWith("landscape") === true ){
+                        if(
+                              this.#vr === null &&
+                              this.#gFrame === null
+                        ){
+                              get_full_environment_camera_for(
+                                    (track_full,width_full,height_full) => {
+                                          try{
+                                                this.#vr = new vr(
+                                                      canvas,
+                                                      width_full,
+                                                      height_full
+                                                );
+                                                let imgc = new ImageCapture(track_full);
+                                                this.#gFrame = (f) => imgc.grabFrame().then(f).catch(
+                                                      (err) => {
+                                                            alert(`Cannot Capture an Image from the Camera, due to:\n${err}`);
+                                                      }
+                                                );
+                                          this.#render = rAF.stream;
+                                          }catch(e){
+                                                track_full.stop();
+                                                this.#vr = null;
+                                                this.#gFrame = null;
+                                                this.#render = rAF.nop;
+                                                throw e;
+                                          }
+                                    }
+                              ).catch(
+                                    (err) => {
+                                          alert(err);
+                                    }
+                              );
+                        }else{
+                              this.#render = rAF.stream;
+                        }
+                        document.body.requestFullscreen();
+                  );
+                  }else{
+                        this.#render = rAF.nop;
+                        document.exitFullscreen();
+                  }
+            }
       }
       function init(canvas){
             screen.orientation.addEventListener(
@@ -24,24 +92,12 @@
                   "pointermove",
                   (e) => e.stopPropagation()
             );
-            screen.orientation.addEventListener(
-                  "change",
-                  (e) => keep_wake(canvas)
-            );
             document.body.addEventListener(
                   "pointermove", 
                   (e) => {
                         const dy = -e.movementY;
                   }
             );
-      }
-      function foo(canvas){
-            let type = screen.orientation?.type ?? "";
-            if( type.startsWith("landscape") === true ){
-                document.body.requestFullscreen();
-            }else{
-                document.exitFullscreen();
-            }
       }
       
       function keep_wake(){
