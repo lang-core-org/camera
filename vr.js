@@ -68,21 +68,22 @@ class vr{
                 0, 0, 
                 this.#half_width, this.#height
             );
-            return (img_bitmap_right) => {
-                if(fcheck(img_bitmap_right)){
-                    this.#context.drawImage(
-                        img_bitmap_right,
-                        this.#x_start + this.#d_right,0,
-                        this.#half_width,this.#height,
-                        this.#half_width, 0, 
-                        this.#half_width, this.#height
-                    );
-                    return Promise.reslove();
-                    
-                }else{
-                    return Promise.reject("unable to draw right");
+            return Promise.resolve(
+                (img_bitmap_right) => {
+                    if(fcheck(img_bitmap_right)){
+                        this.#context.drawImage(
+                            img_bitmap_right,
+                            this.#x_start + this.#d_right,0,
+                            this.#half_width,this.#height,
+                            this.#half_width, 0,
+                            this.#half_width, this.#height
+                        );
+                        return Promise.resolve();
+                    }else{
+                        return Promise.reject("unable to draw right");
+                    }
                 }
-            };
+            );
         }else{
             return Promise.reject("unable to draw left");
         }
