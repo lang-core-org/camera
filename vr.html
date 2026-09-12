@@ -18,8 +18,8 @@
             #render;
             static #nop(it){}
             static #stream(it){
-                  this.#gFrame(
-                        (img) => this.#vr.draw(img)(img)
+                  it.#gFrame(
+                        (img) => it.#vr.draw(img)(img)
                   );
             }
 
