@@ -16,10 +16,15 @@
             #vr = null;
             #gFrame = null;
             #render = rAF.#nop;
-            static #nop(it){}
+            static #nop(it){
+                  it.#next_render();
+            }
             static #stream(it){
                   it.#gFrame(
-                        (img) => it.#vr.draw(img)(img)
+                        (img) => {
+                              it.#vr.draw(img)(img);
+                              it.#next_render();
+                        }
                   );
             }
 
@@ -42,12 +47,13 @@
                               }
                         }
                   );
-
-                  let frender = () => {
-                        this.#render(this);
-                        requestAnimationFrame(frender);
-                  };
-                  requestAnimationFrame(frender);
+                  this.#next_render();
+            }
+            
+            #next_render(){
+                  requestAnimationFrame(
+                        () => this.#render(this);
+                  );
             }
             
             #forientation(canvas){
