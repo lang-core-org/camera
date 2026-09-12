@@ -23,10 +23,12 @@
                   it.#gFrame(
                         (img) => {
                               it.#vr.draw(img).then(
-                                    (fdraw) => fdraw(img)
+                                    (fdraw) => {
+                                          fdraw(img);
+                                          img.close();
+                                          it.#next_render();
+                                    } 
                               );
-                              img.close();
-                              it.#next_render();
                         }
                   );
             }
