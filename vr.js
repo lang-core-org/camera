@@ -6,14 +6,14 @@ class vr{
     #height;
     #half_width;
     #x_start;
-    #d_right; //841
+    #d_right;
 
     constructor(canvas,width,height){
         this.#width = width;
         this.#height = height;
         this.#half_width = this.#width / 2;
         this.#x_start = this.#half_width / 2;
-        this.#d_right = 0;
+        this.#d_right = this.#x_start; //suggest value
         if(
             Number.isInteger(this.#width) === false ||
             Number.isInteger(this.#height) === false ||
