@@ -68,13 +68,6 @@ class vr{
                 0, 0, 
                 this.#half_width, this.#height
             );
-            this.#context.drawImage(
-                img_bitmap_left,
-                this.#x_start,0,
-                this.#half_width, this.#height,
-                this.#half_width,0, 
-                this.#half_width, this.#height
-            );
             return (img_bitmap_right) => {
                 if(fcheck(img_bitmap_right)){
                     this.#context.drawImage(
