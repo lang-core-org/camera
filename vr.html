@@ -22,7 +22,11 @@
             static #stream(it){
                   it.#gFrame(
                         (img) => {
-                              it.#vr.draw(img)(img);
+                              if(it.#render === rAF.#stream){
+                                    it.#vr.draw(img)(img);
+                              }else{
+                                    //pass
+                              }
                               img.close();
                               it.#next_render();
                         }
