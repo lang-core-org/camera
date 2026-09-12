@@ -22,11 +22,9 @@
             static #stream(it){
                   it.#gFrame(
                         (img) => {
-                              if(it.#render === rAF.#stream){ //deprecated
-                                    it.#vr.draw(img)(img);
-                              }else{
-                                    //pass
-                              }
+                              it.#vr.draw(img).then(
+                                    (fdraw) => fdraw(img)
+                              );
                               img.close();
                               it.#next_render();
                         }
