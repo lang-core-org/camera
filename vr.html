@@ -45,7 +45,7 @@
                   document.body.addEventListener(
                         "pointermove",
                         (e) => {
-                              if(this.#render === this.#stream){
+                              if(this.#render === rAF.#stream){
                                     this.#vr.d_right_plus(
                                           Math.trunc(-e.movementY) * 64
                                     );
