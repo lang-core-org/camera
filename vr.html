@@ -25,18 +25,13 @@
 
 
 
-
-
-
-
-            
             constructor(canvas){
                   this.#forientation(canvas);
-                  
                   screen.orientation.addEventListener(
                         "change",
                         (e) => this.#forientation(canvas)
                   );
+                  
                   document.body.addEventListener(
                         "pointermove",
                         (e) => {
@@ -116,6 +111,7 @@
                   "pointermove",
                   (e) => e.stopPropagation()
             );
+            let raf = new rAF(canvas);
       }
       
       function keep_wake(){
