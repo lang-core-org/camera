@@ -14,27 +14,9 @@
 <script>
       class rAF{
             #vr = null;
-            #gFrame = null;
-            #render = rAF.#nop;
-            static #nop(it){
-                  it.#next_render();
-            }
-            static #stream(it){
-                  it.#gFrame(
-                        (img) => {
-                              it.#vr.draw(img).then(
-                                    (fdraw) => {
-                                          fdraw(img);
-                                          img.close();
-                                          it.#next_render();
-                                    } 
-                              );
-                        }
-                  );
-            }
-
-
-
+            #track;
+            #gFrame;
+            
             constructor(canvas){
                   this.#forientation(canvas);
                   screen.orientation.addEventListener(
@@ -54,60 +36,76 @@
                               }
                         }
                   );
-                  this.#next_render();
+                  
+                  this.#render();
             }
-            
-            #next_render(){
-                  requestAnimationFrame(
-                        () => this.#render(this)
+
+            #render(){
+                  this.#gFrame(
+                        (img) => {
+                              this.#vr.draw(img).then(
+                                    (fdraw) => {
+                                          fdraw(img);
+                                          img.close();
+                                    } 
+                              );
+                        }
+                  ).finally(
+                        (_) => {
+                              requestAnimationFrame(
+                                    () => this.#render()
+                              );
+                        }
+                  );
+            }
+
+            #pause(){
+                  this.#gFrame = (__) => Promise.resolve(null);
+                  this.#track.stop();
+                  this.#track = null;
+            }
+
+            #resume(){
+                  get_full_environment_camera_for(
+                        (track_full,width_full,height_full) => {
+                              try{
+                                    this.#vr = this.#vr ?? new vr(
+                                          canvas,
+                                          width_full,
+                                          height_full
+                                    );
+                                    this.#track = track_full;
+                                    let imgc = new ImageCapture(this.#track);
+                                    this.#gFrame = (f) => imgc.grabFrame().then(f).catch(
+                                          (err) => {
+                                                alert(`Cannot Capture an Image from the Camera, due to:\n${err}`);
+                                          }
+                                    );
+                              }catch(e){
+                                    this.#pause();
+                                    this.#vr = null;
+                                    throw e;
+                              }
+                        }
+                  ).catch(
+                        (err) => {
+                              alert(err);
+                        }
                   );
             }
             
             #forientation(canvas){
                   let type = screen.orientation?.type ?? "";
                   if( type.startsWith("landscape") === true ){
-                        if(
-                              this.#vr === null &&
-                              this.#gFrame === null
-                        ){
-                              get_full_environment_camera_for(
-                                    (track_full,width_full,height_full) => {
-                                          try{
-                                                this.#vr = new vr(
-                                                      canvas,
-                                                      width_full,
-                                                      height_full
-                                                );
-                                                let imgc = new ImageCapture(track_full);
-                                                this.#gFrame = (f) => imgc.grabFrame().then(f).catch(
-                                                      (err) => {
-                                                            alert(`Cannot Capture an Image from the Camera, due to:\n${err}`);
-                                                      }
-                                                );
-                                          this.#render = rAF.#stream;
-                                          }catch(e){
-                                                track_full.stop();
-                                                this.#vr = null;
-                                                this.#gFrame = null;
-                                                this.#render = rAF.#nop;
-                                                throw e;
-                                          }
-                                    }
-                              ).catch(
-                                    (err) => {
-                                          alert(err);
-                                    }
-                              );
-                        }else{
-                              this.#render = rAF.#stream;
-                        }
+                        this.#resume();
                         document.body.requestFullscreen();
                   }else{
-                        this.#render = rAF.#nop;
+                        this.#pause();
                         document.exitFullscreen();
                   }
             }
       }
+      
       function init(canvas){
             screen.orientation.addEventListener(
                   "change",
@@ -152,7 +150,7 @@
             width: 100%;
             height:100%;
             background-color: skyblue;
-            object-fit: contain;
+            object-fit: cover;
       }
       @media (orientation: portrait) {
             div{   
