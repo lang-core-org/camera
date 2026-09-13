@@ -27,7 +27,7 @@ class vr{
         };
         for(
             next_k(0);
-            Math.isInteger(this.#x_start) &&
+            Number.isInteger(this.#x_start) &&
             canvas_width <= lim;
             next_k(1)
         ){}
