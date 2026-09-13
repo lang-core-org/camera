@@ -1,4 +1,4 @@
-/* framework by me, finished by Claude */
+/* framework by me, cowork with Claude & DeepSeek*/
 class vr{
     #canvas;
     #context;
@@ -16,7 +16,7 @@ class vr{
             gl?.MAX_TEXTURE_SIZE
         ) ?? Math.min( this.#width, this.#height);
 
-        let k = 2;
+        let k = 1;
         let canvas_width = 0;
         let next_k = (dk) => {
             k = k + dk;
@@ -26,17 +26,25 @@ class vr{
             canvas_width = this.#half_width * 2;
         };
         for(
-            next_k(0);
-            Number.isInteger(this.#x_start) &&
+            next_k(1);
             canvas_width <= lim;
             next_k(1)
         ){}
-        if( k === 2){
+
+        for(
+            next_k(-1);
+            (k !== 1) &&
+            Number.isInteger(
+                this.#x_start
+            ) === false;
+            next_k(-1)
+        ){}
+
+        if( k === 1){
             throw new Error(
                 "Unable to show origin image as SBS VR"
             );
         }else{
-            next_k(-1);
             return canvas_width;
         }
     }
