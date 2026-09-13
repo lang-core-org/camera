@@ -31,13 +31,9 @@
                   document.body.addEventListener(
                         "pointermove",
                         (e) => {
-                              if(this.#render === rAF.#stream){
-                                    this.#vr.d_right_plus(
-                                          Math.trunc(-e.movementY)
-                                    );
-                              }else{
-                                    //pass
-                              }
+                              this.#vr.d_right_plus(
+                                    Math.trunc(-e.movementY)
+                              );
                         }
                   );
                   
