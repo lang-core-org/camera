@@ -12,9 +12,12 @@ class vr{
     auto_vr(){
         let c = new OffscreenCanvas(0, 0);
         let gl = c.getContext("webgl2");
-        let lim = gl?.getParameter?.(
-            gl?.MAX_TEXTURE_SIZE
-        ) ?? Math.min( this.#width, this.#height);
+        let lim = Math.min(
+            this.#width * 2,
+            gl?.getParameter?.(
+                gl?.MAX_TEXTURE_SIZE
+            ) ?? Math.min( this.#width, this.#height)
+        );
 
         let k = 1;
         let canvas_width = 0;
