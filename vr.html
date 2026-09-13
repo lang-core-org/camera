@@ -101,20 +101,25 @@
                               };
 
                               document.body.addEventListener(
-                                    "pointermove",
+                                    "pointerdown",
                                     (e) => {
                                           if(e.clientX < window.innerWidth / 2){
-                                                //left bar
-                                                this.#vr.d_right_plus(
-                                                      Math.trunc(-e.movementY)
-                                                );
-                                          }else if(e.clientY < window.innerHeight / 2){
-                                                // right bar up corner
-                                                this.#pause();
-                                                this.#resume();
+                                                if(e.clientY < window.innerHeight / 2){
+                                                      //left bar up corner
+                                                      this.#vr.d_right_plus(+1);
+                                                }else{
+                                                      //left bar down corner
+                                                      this.#vr.d_right_plus(-1);
+                                                }
                                           }else{
-                                                // right bar down corner
-                                                this.#grab();
+                                                if(e.clientY < window.innerHeight / 2){
+                                                      // right bar up corner
+                                                      this.#pause();
+                                                      this.#resume();
+                                                }else{
+                                                      // right bar down corner
+                                                      this.#grab();
+                                                }
                                           }
                                     }
                               );
