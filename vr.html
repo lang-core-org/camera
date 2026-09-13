@@ -18,7 +18,11 @@
             #gFrame;
             
             constructor(canvas){
+                  try{
                   this.#forientation(canvas);
+                  }catch(e){
+                        alert(e);
+                  }
                   screen.orientation.addEventListener(
                         "change",
                         (e) => this.#forientation(canvas)
