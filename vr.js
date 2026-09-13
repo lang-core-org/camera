@@ -7,8 +7,23 @@ class vr{
     #half_width;
     #x_start;
     #d_right;
+    
+    
+    static tex_limit(){
+        let c = new OffscreenCanvas(0, 0);
+        let gl = c.getContext("webgl2");
+        if(gl !== null){
+            return gl.getParameter(
+                gl.MAX_TEXTURE_SIZE
+            );
+        }else{
+            return null;
+        }
+    }
 
     constructor(canvas,width,height){
+        alert(vr.tex_limit());
+        
         this.#width = width;
         this.#height = height;
         this.#half_width = (this.#width / 4) * 3;
