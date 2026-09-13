@@ -16,8 +16,6 @@
             #vr = null;
             #fdraw;
             #gFrame = (__) => Promise.resolve();
-            #grab;
-
             
             constructor(canvas){
                   
@@ -45,8 +43,6 @@
                         }
                   );
             }
-
-            #grab = this.#grab_left;
             
             #grab_left = () => {
                   this.#grab = () => {};
@@ -67,17 +63,9 @@
                   this.#fdraw = (img) => this.#vr.draw_left(img);
                   this.#grab = this.#grab_left;
             };
+
+            #grab = this.#grab_left;
             
-
-
-
-
-
-
-
-
-            
-
             #pause = () => {};
 
             #resume = (canvas) => {
