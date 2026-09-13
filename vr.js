@@ -8,35 +8,53 @@ class vr{
     #x_start;
     #d_right;
     
-    
-    static tex_limit(){
+    /* return canvas_width if success*/
+    auto_vr(){
         let c = new OffscreenCanvas(0, 0);
         let gl = c.getContext("webgl2");
-        if(gl !== null){
-            return gl.getParameter(
-                gl.MAX_TEXTURE_SIZE
+        let lim = gl?.getParameter?.(
+            gl?.MAX_TEXTURE_SIZE
+        ) ?? Math.min( this.#width, this.#height);
+
+        let k = 2;
+        let canvas_width = 0;
+        let next_k = (dk) => {
+            k = k + dk;
+            this.#half_width = (this.#width / k) * (k - 1);
+            this.#x_start = this.#width / (k * 2);
+            this.#d_right = this.#x_start; //suggest value
+            canvas_width = this.#half_width * 2;
+        };
+        for(
+            next_k(0);
+            Math.isInteger(this.#x_start) &&
+            canvas_width <= lim;
+            next_k(1)
+        ){}
+        if( k === 2){
+            throw new Error(
+                "Unable to show origin image as SBS VR"
             );
         }else{
-            return null;
+            next_k(-1);
+            return canvas_width;
         }
     }
 
     constructor(canvas,width,height){
-        alert(vr.tex_limit());
-        
         this.#width = width;
         this.#height = height;
-        this.#half_width = (this.#width / 4) * 3;
-        this.#x_start = this.#width / 8;
-        this.#d_right = this.#x_start; //suggest value
         if(
             Number.isInteger(this.#width) === false ||
-            Number.isInteger(this.#height) === false ||
-            Number.isInteger(this.#half_width) === false ||
-            Number.isInteger(this.#x_start) === false
+            Number.isInteger(this.#height) === false
         ){
-            throw new Error("unsupported size!");
+            throw new Error(
+                "width/height must be integer"
+            );
         }else{
+            let canvas_width = this.auto_vr();
+            let canvas_height = this.#height;
+            
             this.#canvas = canvas;
             this.#context = this.#canvas?.getContext?.(
                 "2d",
@@ -49,8 +67,8 @@ class vr{
             if(this.#context === null){
                 throw new Error("unsupported canvas 2d!");
             }else{
-                this.#canvas.width = this.#half_width * 2;
-                this.#canvas.height = this.#height;
+                this.#canvas.width = canvas_width;
+                this.#canvas.height = canvas_height;
             }
         }
     }
