@@ -14,8 +14,10 @@
 <script>
       class rAF{
             #vr = null;
-            #stop_track = () => {};
-            #gFrame;
+            #fdraw;
+            #gFrame = (__) => Promise.resolve();
+            #grab;
+
             
             constructor(canvas){
                   
@@ -25,26 +27,14 @@
                         (e) => this.#forientation(canvas)
                   );
                   
-                  document.body.addEventListener(
-                        "pointermove",
-                        (e) => {
-                              this.#vr.d_right_plus(
-                                    Math.trunc(-e.movementY)
-                              );
-                        }
-                  );
-                  
                   this.#render();
             }
 
             #render(){
                   this.#gFrame(
                         (img) => {
-                              this.#vr.draw(img).then(
-                                    (fdraw) => {
-                                          fdraw(img);
-                                          img.close();
-                                    } 
+                              this.#fdraw(img).finally(
+                                    () => img.close()
                               );
                         }
                   ).finally(
@@ -56,44 +46,100 @@
                   );
             }
 
-            #pause(){
-                  this.#gFrame = (__) => Promise.resolve(null);
-                  this.#stop_track();
-            }
+            #grab = this.#grab_left;
+            
+            #grab_left = () => {
+                  this.#grab = () => {};
+                  this.#fdraw = (img) => this.#vr.draw_right(img);
+                  this.#grab = this.#grab_right;
+                  
+            };
 
-            #resume(canvas){
+            #grab_right = () => {
+                  this.#grab = () => {};
+                  this.#fdraw = (img) => Promise.resolve(null);
+                  //download
+                  //todo
+            };
+
+            #finish_grab = () => {
+                  this.#vr.clear();
+                  this.#fdraw = (img) => this.#vr.draw_left(img);
+                  this.#grab = this.#grab_left;
+            };
+            
+
+
+
+
+
+
+
+
+            
+
+            #pause = () => {};
+
+            #resume = (canvas) => {
+                  this.#resume = (__) => alert("Failed to start Camera.");
+                  
                   get_full_environment_camera_for(
                         (track_full,width_full,height_full) => {
                               try{
-                                    this.#vr = this.#vr ?? new vr(
+                                    this.#vr = new vr(
                                           canvas,
                                           width_full,
                                           height_full
                                     );
-                                    
-                                    this.#stop_track = () => {
-                                          this.#stop_track = () => {};
-                                          track_full.stop();
-                                    };
-                                    
-                                    let imgc = new ImageCapture(track_full);
-                                    this.#gFrame = (f) => imgc.grabFrame().then(f).catch(
-                                          (err) => {
-                                                alert(`Cannot Capture an Image from the Camera, due to:\n${err}`);
-                                          }
-                                    );
                               }catch(e){
-                                    this.#pause();
+                                    track_full.stop();
                                     this.#vr = null;
                                     throw e;
                               }
+
+
+
+                              document.body.addEventListener(
+                                    "pointermove",
+                                    (e) => {
+                                          if(e.clientX < window.innerWidth / 2){
+                                                //left bar
+                                                this.#vr.d_right_plus(
+                                                      Math.trunc(-e.movementY)
+                                                );
+                                          }else if(e.clientY < window.innerHeight / 2){
+                                                // right bar up corner
+                                                this.#grab = () => {};
+                                                this.#fdraw = (img) => Promise.resolve(null);
+                                                this.#finish_grab();
+                                          }else{
+                                                // right bar down corner
+                                                this.#grab();
+                                          }
+                                    }
+                              );
+                              
+                              let imgc = new ImageCapture(track_full);
+                              this.#gFrame = (f) => imgc.grabFrame().then(f).catch(
+                                    (err) => {
+                                          alert(`Cannot Capture an Image from the Camera, due to:\n${err}`);
+                                    }
+                              );
+                              
+                              this.#pause = () => {
+                                    this.#vr.clear();
+                              };
+                              this.#resume = (__) => {
+                                    this.#fdraw = (img) => this.#vr.draw_left(img);
+                              };
+                              
                         }
                   ).catch(
                         (err) => {
                               alert(err);
                         }
                   );
-            }
+            };
             
             #forientation(canvas){
                   let type = screen.orientation?.type ?? "";
