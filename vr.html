@@ -52,16 +52,12 @@
             };
 
             #grab_right = () => {
-                  this.#grab = () => {};
-                  this.#fdraw = (img) => Promise.resolve(null);
+                  this.#pause();
                   //download
+                  this.#vr.save().finally(
+                        (__) => this.resume()
+                  );
                   //todo
-            };
-
-            #finish_grab = () => {
-                  this.#vr.clear();
-                  this.#fdraw = (img) => this.#vr.draw_left(img);
-                  this.#grab = this.#grab_left;
             };
 
             #grab = this.#grab_left;
@@ -84,8 +80,25 @@
                                     this.#vr = null;
                                     throw e;
                               }
-
-
+                              
+                              this.#fdraw = (img) => this.#vr.draw_left(img);
+                              
+                              let imgc = new ImageCapture(track_full);
+                              this.#gFrame = (f) => imgc.grabFrame().then(f).catch(
+                                    (err) => {
+                                          alert(`Cannot Capture an Image from the Camera, due to:\n${err}`);
+                                    }
+                              );
+                              
+                              this.#pause = () => {
+                                    this.#grab = () => {};
+                                    this.#fdraw = (img) => Promise.resolve(null);
+                              };
+                              this.#resume = () => {
+                                    this.#vr.clear();
+                                    this.#fdraw = (img) => this.#vr.draw_left(img);
+                                    this.#grab = this.#grab_left;
+                              };
 
                               document.body.addEventListener(
                                     "pointermove",
@@ -97,29 +110,14 @@
                                                 );
                                           }else if(e.clientY < window.innerHeight / 2){
                                                 // right bar up corner
-                                                this.#grab = () => {};
-                                                this.#fdraw = (img) => Promise.resolve(null);
-                                                this.#finish_grab();
+                                                this.#pause();
+                                                this.#resume();
                                           }else{
                                                 // right bar down corner
                                                 this.#grab();
                                           }
                                     }
                               );
-                              
-                              let imgc = new ImageCapture(track_full);
-                              this.#gFrame = (f) => imgc.grabFrame().then(f).catch(
-                                    (err) => {
-                                          alert(`Cannot Capture an Image from the Camera, due to:\n${err}`);
-                                    }
-                              );
-                              
-                              this.#pause = () => {
-                                    this.#vr.clear();
-                              };
-                              this.#resume = (__) => {
-                                    this.#fdraw = (img) => this.#vr.draw_left(img);
-                              };
                               
                         }
                   ).catch(
