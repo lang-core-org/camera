@@ -53,39 +53,49 @@ class vr{
             throw new Error("d_right_plus required Integer");
         }
     }
-    
-    draw(img_bitmap_left){
-        let fcheck = (tex) => (
+
+    #fcheck(tex){
+        return (
             tex instanceof ImageBitmap &&
             tex.width === this.#width &&
             tex.height === this.#height
         );
-        if(fcheck(img_bitmap_left)){
+    }
+
+    clear(){
+        this.#context.clearRect(
+            0, 0,
+            this.#canvas.width, this.#canvas.height
+        );
+    }
+
+    draw_left(img_bitmap_left){
+        if(this.#fcheck(img_bitmap_left)){
             this.#context.drawImage(
                 img_bitmap_left,
                 this.#x_start, 0,
                 this.#half_width, this.#height,
-                0, 0, 
+                0, 0,
                 this.#half_width, this.#height
             );
-            return Promise.resolve(
-                (img_bitmap_right) => {
-                    if(fcheck(img_bitmap_right)){
-                        this.#context.drawImage(
-                            img_bitmap_right,
-                            this.#x_start + this.#d_right,0,
-                            this.#half_width,this.#height,
-                            this.#half_width, 0,
-                            this.#half_width, this.#height
-                        );
-                        return Promise.resolve();
-                    }else{
-                        return Promise.reject("unable to draw right");
-                    }
-                }
-            );
+            return Promise.resolve();
         }else{
             return Promise.reject("unable to draw left");
+        }
+    }
+
+    draw_right(img_bitmap_right){
+        if(this.#fcheck(img_bitmap_right)){
+            this.#context.drawImage(
+                img_bitmap_right,
+                this.#x_start + this.#d_right, 0,
+                this.#half_width, this.#height,
+                this.#half_width, 0,
+                this.#half_width, this.#height
+            );
+            return Promise.resolve();
+        }else{
+            return Promise.reject("unable to draw right");
         }
     }
 }
