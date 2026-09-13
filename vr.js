@@ -12,15 +12,11 @@ class vr{
     auto_vr(){
         let c = new OffscreenCanvas(0, 0);
         let gl = c.getContext("webgl2");
-        let lim = Math.min(
-            this.#width * 2,
-            gl?.getParameter?.(
-                gl?.MAX_TEXTURE_SIZE
-            ) ?? Math.min( this.#width, this.#height)
-        );
+        let lim = gl?.getParameter?.(
+            gl?.MAX_TEXTURE_SIZE
+        ) ?? Math.min( this.#width, this.#height);
 
         let k = 1;
-        let canvas_width = 0;
         let next_k = (dk) => {
             k = k + dk;
             this.#half_width = (this.#width / k) * (k - 1);
@@ -28,12 +24,16 @@ class vr{
             this.#d_right = this.#x_start; //suggest value
             canvas_width = this.#half_width * 2;
         };
+        
+        let canvas_width = 0;
+        
         for(
             next_k(1);
-            canvas_width <= lim;
+            (1 <= this.#x_start) &&
+            (canvas_width <= lim);
             next_k(1)
         ){}
-
+        
         for(
             next_k(-1);
             (k !== 1) &&
