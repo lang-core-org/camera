@@ -14,7 +14,7 @@
 <script>
       class rAF{
             #vr = null;
-            #track;
+            #stop_track = () => {};
             #gFrame;
             
             constructor(canvas){
@@ -61,8 +61,7 @@
 
             #pause(){
                   this.#gFrame = (__) => Promise.resolve(null);
-                  this.#track?.stop();
-                  this.#track = null;
+                  this.#stop_track();
             }
 
             #resume(canvas){
@@ -74,8 +73,13 @@
                                           width_full,
                                           height_full
                                     );
-                                    this.#track = track_full;
-                                    let imgc = new ImageCapture(this.#track);
+                                    
+                                    this.#stop_track = () => {
+                                          this.#stop_track = () => {};
+                                          track_full.stop();
+                                    };
+                                    
+                                    let imgc = new ImageCapture(track_full);
                                     this.#gFrame = (f) => imgc.grabFrame().then(f).catch(
                                           (err) => {
                                                 alert(`Cannot Capture an Image from the Camera, due to:\n${err}`);
