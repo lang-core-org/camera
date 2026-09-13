@@ -61,7 +61,7 @@
 
             #pause(){
                   this.#gFrame = (__) => Promise.resolve(null);
-                  this.#track.stop();
+                  this.#track?.stop();
                   this.#track = null;
             }
 
