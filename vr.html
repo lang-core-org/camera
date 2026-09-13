@@ -65,7 +65,7 @@
                   this.#track = null;
             }
 
-            #resume(){
+            #resume(canvas){
                   get_full_environment_camera_for(
                         (track_full,width_full,height_full) => {
                               try{
@@ -97,7 +97,7 @@
             #forientation(canvas){
                   let type = screen.orientation?.type ?? "";
                   if( type.startsWith("landscape") === true ){
-                        this.#resume();
+                        this.#resume(canvas);
                         document.body.requestFullscreen();
                   }else{
                         this.#pause();
