@@ -98,4 +98,30 @@ class vr{
             return Promise.reject("unable to draw right");
         }
     }
+    
+    save(){
+        return new Promise(
+            (resolve, reject) => {
+                this.#canvas.toBlob(
+                    (blob) => {
+                        if(blob !== null){
+                            let name = 
+                                `VR_Image [${new Date().getTime()}]_SBS.png`;
+                            let url = URL.createObjectURL(blob);
+                            let a = document.createElement('a');
+                            a.href = url;
+                            a.download = name;
+                            a.click();
+                            URL.revokeObjectURL(url);
+                            resolve();
+                        }else{
+                            reject("Failed to save photos.");
+                        }
+                    }, 
+                    "image/png"
+                )
+            }
+        );
+    }
+    
 }
