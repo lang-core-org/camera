@@ -155,6 +155,11 @@
                   "pointermove",
                   (e) => e.stopPropagation()
             );
+            canvas.addEventListener(
+                  "pointerdown",
+                  (e) => e.stopPropagation()
+            );
+            
             let raf = new rAF(canvas);
       }
       
