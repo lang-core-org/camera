@@ -83,7 +83,7 @@
                               
                               this.#fdraw = (img) => {
                                     this.#vr.draw_left(img);
-                                    this.#vf.draw_right(img);
+                                    this.#vr.draw_right(img);
                               };
                               
                               let imgc = new ImageCapture(track_full);
@@ -101,7 +101,7 @@
                                     this.#vr.clear();
                                     this.#fdraw = (img) => {
                                           this.#vr.draw_left(img);
-                                          this.#vf.draw_right(img);
+                                          this.#vr.draw_right(img);
                                     };
                                     this.#grab = this.#grab_left;
                               };
