@@ -5,8 +5,8 @@ class vr{
     #width;
     #height;
     #half_width;
-    #x_start;
     #d_right;
+    #d_right_lim;
     
     /* return canvas_width if success*/
     auto_vr(){
@@ -16,17 +16,18 @@ class vr{
             gl?.MAX_TEXTURE_SIZE
         ) ?? Math.min( this.#width, this.#height);
 
+        let canvas_width = 0;
+        
         let k = 1;
         let k_lim = 8; //guess number
         let next_k = (dk) => {
             k = k + dk;
-            this.#half_width = (this.#width / k) * (k - 1);
-            this.#x_start = this.#width / (k * 2);
-            this.#d_right = this.#x_start; //suggest value
+            this.#d_right_lim = this.#width / k;
+            this.#d_right = this.#d_right_lim; //suggest value
+            this.#half_width = this.#width - this.#d_right_lim;
             canvas_width = this.#half_width * 2;
         };
         
-        let canvas_width = 0;
         
         for(
             next_k(1);
@@ -39,7 +40,7 @@ class vr{
             next_k(-1);
             (k !== 1) &&
             Number.isInteger(
-                this.#x_start
+                this.#d_right_lim
             ) === false;
             next_k(-1)
         ){}
@@ -90,9 +91,9 @@ class vr{
             this.#d_right = Math.min(
                 Math.max(
                     this.#d_right + dx,
-                    -this.#x_start
+                    0
                 ),
-                this.#x_start
+                this.#d_right_lim
             );
         }else{
             throw new Error("d_right_plus required Integer");
@@ -118,7 +119,7 @@ class vr{
         if(this.#fcheck(img_bitmap_left)){
             this.#context.drawImage(
                 img_bitmap_left,
-                this.#x_start, 0,
+                0, 0,
                 this.#half_width, this.#height,
                 0, 0,
                 this.#half_width, this.#height
@@ -133,7 +134,7 @@ class vr{
         if(this.#fcheck(img_bitmap_right)){
             this.#context.drawImage(
                 img_bitmap_right,
-                this.#x_start + this.#d_right, 0,
+                this.#d_right, 0,
                 this.#half_width, this.#height,
                 this.#half_width, 0,
                 this.#half_width, this.#height
