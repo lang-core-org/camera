@@ -17,7 +17,7 @@ class vr{
         ) ?? Math.min( this.#width, this.#height);
 
         let k = 1;
-        let k_lim = 16; //guess number
+        let k_lim = 8; //guess number
         let next_k = (dk) => {
             k = k + dk;
             this.#half_width = (this.#width / k) * (k - 1);
