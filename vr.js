@@ -19,7 +19,7 @@ class vr{
         let canvas_width = 0;
         
         let k = 1;
-        let k_lim = 8; //guess number
+        let k_lim = 5; //sup lim
         let next_k = (dk) => {
             k = k + dk;
             this.#d_right_lim = this.#width / k;
