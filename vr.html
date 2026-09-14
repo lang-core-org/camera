@@ -60,7 +60,7 @@
                   //todo
             };
 
-            #grab = this.#grab_left;
+            #grab = () => {};
             
             #pause = () => {};
 
@@ -81,11 +81,6 @@
                                     throw e;
                               }
                               
-                              this.#fdraw = (img) => {
-                                    this.#vr.draw_left(img);
-                                    this.#vr.draw_right(img);
-                              };
-                              
                               let imgc = new ImageCapture(track_full);
                               this.#gFrame = (f) => imgc.grabFrame().then(f).catch(
                                     (err) => {
@@ -99,12 +94,13 @@
                               };
                               this.#resume = () => {
                                     this.#vr.clear();
-                                    this.#fdraw = (img) => {
-                                          this.#vr.draw_left(img);
-                                          this.#vr.draw_right(img);
-                                    };
+                                    this.#fdraw = (img) => this.#vr.draw_left(img).then(
+                                          () => this.#vr.draw_right(img)
+                                    );
                                     this.#grab = this.#grab_left;
                               };
+
+                              this.#resume();
 
                               document.body.addEventListener(
                                     "pointerdown",
