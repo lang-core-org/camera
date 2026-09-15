@@ -166,7 +166,7 @@
                             //PASS
                         }else{
                             ref.#replace(img);
-                            ref.#vr_handle = ref.#tools.vr_adapte.draw_left;
+                            ref.#vr_handle = ref.#tools.vr_adapter.draw_left;
                             ref.#update(
                                 INFO.CAPTURED,
                                 INFO.CAPTURING,
@@ -194,7 +194,7 @@
                             //PASS
                         }else{
                             ref.#replace(img);
-                            ref.#vr_handle = ref.#tools.vr_adapte.draw_right;
+                            ref.#vr_handle = ref.#tools.vr_adapter.draw_right;
                             ref.#update(
                                 INFO.CAPTURING,
                                 INFO.CAPTURED,
@@ -398,12 +398,25 @@ or click right to cancel.`
             canvas,
             horizon
         ){
-            return gpu.of(
-                canvas,
-                width_full,
-                height_full
+            return Promise.all(
+                [
+                    gpu.of(
+                        canvas,
+                        width_full,
+                        height_full
+                    ),
+                    vr.of(
+                        width_full,
+                        height_full
+                    )
+                ]
             ).then(
-                (render) => {
+                (
+                    [
+                        render,
+                        vr_adapter
+                    ]
+                ) => {
                     let imgc = new ImageCapture(track_full);
                     let draw_2d = direct.draw(render);
                     let draw_3d = dubois.anaglyph(render);
@@ -420,7 +433,7 @@ or click right to cancel.`
                         ),
                         preview_2d: draw_2d,
                         preview_3d: draw_3d,
-                        vr_adapter: vr.of(width_full,height_full),
+                        vr_adapter: vr_adapter,
                         /* [Horizon Interface]
                             Horizon::expect_locked(expect_what)
                             expect_what === true:
