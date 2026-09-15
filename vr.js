@@ -110,15 +110,28 @@ class vr{
             tex.height === this.#height
         );
     }
-
-    #clear(){
+    
+    clear(){
         this.#context.clearRect(
             0, 0,
             this.#canvas.width, this.#canvas.height
         );
     }
 
-    #draw_left(img_bitmap_left){
+    /*
+    note: do not specified second params.
+    return promise with resolved 
+    func f(img) for draw img into other side, 
+    then return promise with resolved
+    value this
+    */
+    draw_left(
+        img_bitmap_left,
+        next = (img_bitmap_right) => this.draw_right(
+            img_bitmap_right,
+            this
+        )
+    ){
         if(this.#fcheck(img_bitmap_left)){
             this.#context.drawImage(
                 img_bitmap_left,
@@ -127,13 +140,26 @@ class vr{
                 0, 0,
                 this.#half_width, this.#height
             );
-            return Promise.resolve();
+            return Promise.resolve(next);
         }else{
             return Promise.reject("unable to draw left");
         }
     }
 
-    #draw_right(img_bitmap_right){
+    /*
+    note: do not specified second params.
+    return promise with resolved 
+    func f(img) for draw img into other side, 
+    then return promise with resolved
+    value this
+    */
+    draw_right(
+        img_bitmap_right,
+        next = (img_bitmap_left) => this.draw_left(
+            img_bitmap_left,
+            this
+        )
+    ){
         if(this.#fcheck(img_bitmap_right)){
             this.#context.drawImage(
                 img_bitmap_right,
@@ -142,7 +168,7 @@ class vr{
                 this.#half_width, 0,
                 this.#half_width, this.#height
             );
-            return Promise.resolve();
+            return Promise.resolve(next);
         }else{
             return Promise.reject("unable to draw right");
         }
@@ -160,6 +186,32 @@ class vr{
                 URL.revokeObjectURL(url);
             }
         );
+    }
+
+    /*
+    */
+    copy_img_pipeline(canvas){
+        let context = canvas?.getContext?.(
+            "2d",
+            {
+                alpha: false,
+                colorSpace: "display-p3",
+                colorType: "float16"
+            }
+        ) ?? null;
+        if(context === null){
+            return Promise.reject(
+                "unsupported canvas 2d!"
+            );
+        }else{
+            return Promise.resolve(
+                () => {
+                    canvas.width = this.#canvas.width;
+                    canvas.height = this.#canvas.height;
+                    context.drawImage(this.#canvas,0,0);
+                }
+            );
+        }
     }
     
 }
