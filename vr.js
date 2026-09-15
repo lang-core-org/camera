@@ -107,39 +107,28 @@ class vr{
         try{
             let wh = new vr(width,height);
             let hw = new vr(height,width);
+            return Promise.resolve(
+                {
+                    draw_left:(img) => {
+                        wh.clear();
+                        hw.clear();
+                        return wh.draw_left(img).catch(
+                            (_) => hw.draw_left(img)
+                        );
+                    },
+                    draw_right:(img) => {
+                        wh.clear();
+                        hw.clear();
+                        return wh.draw_right(img).catch(
+                            (_) => hw.draw_right(img)
+                        );
+                    }
+                }
+            );
         }catch(e){
             return Promise.reject(e);
         }
-
-        return Promise.resolve(
-            {
-                draw_left:(img) => {
-                    wh.clear();
-                    hw.clear();
-                    return wh.draw_left(img).catch(
-                        (_) => hw.draw_left(img)
-                    );
-                },
-                draw_right:(img) => {
-                    wh.clear();
-                    hw.clear();
-                    return wh.draw_right(img).catch(
-                        (_) => hw.draw_right(img)
-                    );
-                }
-            }
-        );
     }
-
-
-
-
-
-
-
-
-
-    
 
     //deprecate
     d_right_plus(dx){
