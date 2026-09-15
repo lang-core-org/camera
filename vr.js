@@ -1,4 +1,4 @@
-/* framework by me, cowork with Claude & DeepSeek*/
+/* framework by me, cowork with Claude & DeepSeek & ChatGPT*/
 class vr{
     #canvas;
     #context;
