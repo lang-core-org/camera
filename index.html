@@ -32,7 +32,7 @@
             #fclick;
             #capture;
             #canvas;
-            #vr_handle; //this.#tools.vr_adapter
+            #vr_handle = () => Promise.reject("no capture");
             
             constructor(tools,info,canvas){
                 this.#tools = tools;
@@ -166,6 +166,7 @@
                             //PASS
                         }else{
                             ref.#replace(img);
+                            ref.#vr_handle = ref.#tools.vr_adapte.draw_left;
                             ref.#update(
                                 INFO.CAPTURED,
                                 INFO.CAPTURING,
@@ -193,6 +194,7 @@
                             //PASS
                         }else{
                             ref.#replace(img);
+                            ref.#vr_handle = ref.#tools.vr_adapte.draw_right;
                             ref.#update(
                                 INFO.CAPTURING,
                                 INFO.CAPTURED,
@@ -219,14 +221,30 @@
                     //PASS
                 }else{
                     ref.#capture = (ref,img = null) => {
-                        ref.#replace(null);
-                        img?.close();
                         ref.#update(
                             INFO.CAPTURED,
                             INFO.CAPTURED,
                             rAF.#snooze,
                             (e) =>{ /*PASS*/ }
                         );
+
+                        //TODO
+
+                        
+                        //save sbs vr
+                        ref.#vr_handle(ref.#img).then(
+                            (draw) => draw(img)
+                        ).then(
+                            (vro) => vro.save()
+                        ).finally(
+                            (_) => {
+                                ref.#replace(null);
+                                img?.close();
+                                ref.#vr_handle = () => Promise.reject("no capture");
+                            }
+                        );
+
+                        //save duobis 
                         ref.#canvas.toBlob(
                             (blob) => {
                                 if(blob !== null){
@@ -259,6 +277,7 @@
                     //PASS
                 }else{
                     ref.#capture = (ref,img = null) => {
+                        ref.#vr_handle = () => Promise.reject("no capture");
                         ref.#replace(null);
                         img?.close();
                         ref.#update(
@@ -486,11 +505,12 @@ or click right to cancel.`
             width: 3rem;
             height: 3rem;
             border: 0.1rem solid white;
+            text-align: center;
         }
         fieldset{
             position:fixed;
-            left: 2%;
-            bottom:2%;
+            left: 1%;
+            bottom:1%;
         }
         #info,#help,fieldset{
             z-index:3;
