@@ -54,7 +54,7 @@ class vr{
         }
     }
 
-    constructor(canvas,width,height){
+    constructor(width,height){
         this.#width = width;
         this.#height = height;
         if(
@@ -68,7 +68,11 @@ class vr{
             let canvas_width = this.auto_vr();
             let canvas_height = this.#height;
             
-            this.#canvas = canvas;
+            this.#canvas = new OffscreenCanvas(
+                canvas_width,
+                canvas_height
+            );
+            
             this.#context = this.#canvas?.getContext?.(
                 "2d",
                 {
@@ -80,8 +84,7 @@ class vr{
             if(this.#context === null){
                 throw new Error("unsupported canvas 2d!");
             }else{
-                this.#canvas.width = canvas_width;
-                this.#canvas.height = canvas_height;
+                //pass
             }
         }
     }
@@ -146,26 +149,15 @@ class vr{
     }
     
     save(){
-        return new Promise(
-            (resolve, reject) => {
-                this.#canvas.toBlob(
-                    (blob) => {
-                        if(blob !== null){
-                            let name = 
-                                `VR_Image [${new Date().getTime()}]_SBS.png`;
-                            let url = URL.createObjectURL(blob);
-                            let a = document.createElement('a');
-                            a.href = url;
-                            a.download = name;
-                            a.click();
-                            URL.revokeObjectURL(url);
-                            resolve();
-                        }else{
-                            reject("Failed to save photos.");
-                        }
-                    }, 
-                    "image/png"
-                )
+        return this.#canvas.convertToBlob().then(
+            (blob) => {
+                let name = `VR_Image [${new Date().getTime()}]_SBS.png`;
+                let url = URL.createObjectURL(blob);
+                let a = document.createElement('a');
+                a.href = url;
+                a.download = name;
+                a.click();
+                URL.revokeObjectURL(url);
             }
         );
     }
