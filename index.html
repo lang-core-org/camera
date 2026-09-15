@@ -32,6 +32,7 @@
             #fclick;
             #capture;
             #canvas;
+            #vr_handle; //this.#tools.vr_adapter
             
             constructor(tools,info,canvas){
                 this.#tools = tools;
@@ -400,6 +401,7 @@ or click right to cancel.`
                         ),
                         preview_2d: draw_2d,
                         preview_3d: draw_3d,
+                        vr_adapter: vr.of(width_full,height_full),
                         /* [Horizon Interface]
                             Horizon::expect_locked(expect_what)
                             expect_what === true:
@@ -453,6 +455,7 @@ or click right to cancel.`
     </script>
     <script src="camera.js"></script>
     <script src="gpu.js"></script>
+    <script src="vr.js"></script>
     <script src="horizon.js"></script>
     <style>
         canvas,#info,#horizon{
@@ -474,25 +477,26 @@ or click right to cancel.`
         }
         #info,#horizon{
             pointer-events: none;
-            color: white;
             opacity: 0.5;
         }  
         #help{
             position:fixed;
             right: 5%;
             bottom: 5%;
+            border: 0.1rem solid white;
         }
         fieldset{
             position:fixed;
             left: 2%;
             bottom:2%;
-            color: white;
         }
         #info,#help,fieldset{
             z-index:3;
             font-family: emoji;
             font-weight:bold;
             font-size:1.5rem;
+            color: white;
+            user-select:none;
         }
         body{
             background-color: black;
@@ -517,14 +521,10 @@ onload="init(
     <canvas id="img_canvas"></canvas>
     <div id="help">❔</div>
     <fieldset id="save">
-        <legend>Save As:</legend>
+        <legend>Also Save</legend>
         <div>
-            <input type="checkbox" id="SBS"/>
-            <label for="SBS">SBS</label>
-        </div>
-        <div>
-            <input type="checkbox" id="Dubois"/>
-            <label for="Dubois">Dubois</label>
+            <input type="checkbox" id="sbs-vr"/>
+            <label for="sbs-vr">SBS VR</label>
         </div>
     </fieldset>
     
