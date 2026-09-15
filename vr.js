@@ -54,6 +54,14 @@ class vr{
         }
     }
 
+    #fcheck(tex){
+        return (
+            tex instanceof ImageBitmap &&
+            tex.width === this.#width &&
+            tex.height === this.#height
+        );
+    }
+
     constructor(width,height){
         this.#width = width;
         this.#height = height;
@@ -89,6 +97,7 @@ class vr{
         }
     }
 
+    //deprecate
     d_right_plus(dx){
         if(Number.isInteger(dx) === true){
             this.#d_right = Math.min(
@@ -103,14 +112,9 @@ class vr{
         }
     }
 
-    #fcheck(tex){
-        return (
-            tex instanceof ImageBitmap &&
-            tex.width === this.#width &&
-            tex.height === this.#height
-        );
-    }
-    
+    /*
+    clear canvas
+    */
     clear(){
         this.#context.clearRect(
             0, 0,
@@ -173,7 +177,9 @@ class vr{
             return Promise.reject("unable to draw right");
         }
     }
-    
+    /*
+    save img from canvas without clear canvas
+    */
     save(){
         return this.#canvas.convertToBlob().then(
             (blob) => {
@@ -189,29 +195,10 @@ class vr{
     }
 
     /*
+    return Promise with resolved
+    ImageBitmap img from canvas
     */
-    copy_img_pipeline(canvas){
-        let context = canvas?.getContext?.(
-            "2d",
-            {
-                alpha: false,
-                colorSpace: "display-p3",
-                colorType: "float16"
-            }
-        ) ?? null;
-        if(context === null){
-            return Promise.reject(
-                "unsupported canvas 2d!"
-            );
-        }else{
-            return Promise.resolve(
-                () => {
-                    canvas.width = this.#canvas.width;
-                    canvas.height = this.#canvas.height;
-                    context.drawImage(this.#canvas,0,0);
-                }
-            );
-        }
+    copy(){
+        return createImageBitmap(this.#canvas);
     }
-    
 }
