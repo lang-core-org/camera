@@ -482,7 +482,12 @@ or click right to cancel.`
             right: 5%;
             bottom: 5%;
         }
-        #info,#help{
+        fieldset{
+            position:fixed;
+            left: 5%;
+            bottom:5%;
+        }
+        #info,#help,field_set{
             z-index:3;
             font-family: emoji;
             font-weight:bold;
@@ -509,4 +514,16 @@ onload="init(
     </svg>
     <canvas id="img_canvas"></canvas>
     <div id="help">❔</div>
+    <fieldset>
+        <legend>Save As:</legend>
+        <div>
+            <input type="checkbox" id="SBS VR"/>
+            <label for="SBS VR">SBS VR</label>
+        </div>
+        <div>
+            <input type="checkbox" id="Dubois Anaglyph"/>
+            <label for="Dubois Anaglyph">Dubois Anaglyph</label>
+        </div>
+    </fieldset>
+    
 </body>
