@@ -9,7 +9,7 @@ class vr{
     #d_right_lim;
     
     /* return canvas_width if success*/
-    auto_vr(){
+    #auto_vr(){
         let c = new OffscreenCanvas(0, 0);
         let gl = c.getContext("webgl2");
         let lim = gl?.getParameter?.(
@@ -65,7 +65,7 @@ class vr{
                 "width/height must be integer"
             );
         }else{
-            let canvas_width = this.auto_vr();
+            let canvas_width = this.#auto_vr();
             let canvas_height = this.#height;
             
             this.#canvas = new OffscreenCanvas(
@@ -111,14 +111,14 @@ class vr{
         );
     }
 
-    clear(){
+    #clear(){
         this.#context.clearRect(
             0, 0,
             this.#canvas.width, this.#canvas.height
         );
     }
 
-    draw_left(img_bitmap_left){
+    #draw_left(img_bitmap_left){
         if(this.#fcheck(img_bitmap_left)){
             this.#context.drawImage(
                 img_bitmap_left,
@@ -133,7 +133,7 @@ class vr{
         }
     }
 
-    draw_right(img_bitmap_right){
+    #draw_right(img_bitmap_right){
         if(this.#fcheck(img_bitmap_right)){
             this.#context.drawImage(
                 img_bitmap_right,
