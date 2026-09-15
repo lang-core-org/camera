@@ -54,7 +54,7 @@
                 rAF.#render(this);
                 
                 document.body.addEventListener(
-                    "click",
+                    "pointerdown",
                     (e) => this.#fclick(e)
                 );  
                 screen.orientation.addEventListener(
@@ -289,7 +289,7 @@
             
         }
 
-        function init(canvas,info,horizon,help){
+        function init(canvas,info,horizon,save,help){
             get_full_environment_camera_for(
                 (
                     track_full,
@@ -307,9 +307,9 @@
                     let c = new rAF(tools,info,canvas);
 
                     document.body.addEventListener(
-                        "click",
+                        "pointerdown",
                         (e) => keep_wake()
-                    );
+                    );  
                     
                     screen.orientation.addEventListener(
                         "change",
@@ -326,6 +326,11 @@
                             }
                         }
                     );
+
+                    save.addEventListener(
+                        "pointerdown",
+                        (e) => e.stopPropagation();
+                    );  
 
                     let fhelp = (start,end) => {
                         help.addEventListener(
@@ -444,10 +449,6 @@ or click right to cancel.`
                 );
         
         }
-
-        function help(e){
-            event.stopPropagation();
-        }
         
     </script>
     <script src="camera.js"></script>
@@ -505,6 +506,7 @@ onload="init(
     document.getElementById('img_canvas'),
     document.getElementById('info'),
     document.getElementById('horizon'),
+    document.getElementById('save'),
     document.getElementById('help')
 )">
     <div id="info"></div>
@@ -514,15 +516,15 @@ onload="init(
     </svg>
     <canvas id="img_canvas"></canvas>
     <div id="help">❔</div>
-    <fieldset>
+    <fieldset id="save">
         <legend>Save As:</legend>
         <div>
-            <input type="checkbox" id="SBS VR"/>
-            <label for="SBS VR">SBS VR</label>
+            <input type="checkbox" id="SBS"/>
+            <label for="SBS">SBS</label>
         </div>
         <div>
-            <input type="checkbox" id="Dubois Anaglyph"/>
-            <label for="Dubois Anaglyph">Dubois Anaglyph</label>
+            <input type="checkbox" id="Dubois"/>
+            <label for="Dubois">Dubois</label>
         </div>
     </fieldset>
     
