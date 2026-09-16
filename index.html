@@ -166,10 +166,7 @@
 
             static #abstract_fclick(ref,left,right){
                 return ({clientX}) => {
-                    screen.orientation.addEventListener(
-                        "change",
-                        (e) => keep_wake()
-                    );
+                    keep_wake();
                     let half = document.documentElement.clientWidth / 2;
                     if(clientX < half){
                         left(ref);
