@@ -407,13 +407,15 @@ or click right to cancel.`
                     vr.of(
                         width_full,
                         height_full
-                    )
+                    ),
+                    file.of("downloads")
                 ]
             ).then(
                 (
                     [
                         render,
-                        vr_adapter
+                        vr_adapter,
+                        file
                     ]
                 ) => {
                     let imgc = new ImageCapture(track_full);
@@ -488,6 +490,7 @@ or click right to cancel.`
     <script src="gpu.js"></script>
     <script src="vr.js"></script>
     <script src="horizon.js"></script>
+    <script src="https://lang-core.org/file.js"></script>
     <style>
         canvas,#info,#horizon{
             position: fixed;
