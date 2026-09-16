@@ -33,6 +33,18 @@
             #capture;
             #canvas;
             #vr_handle = () => Promise.reject("no capture");
+            #vr_flag = document.getElementById("sbs-vr");
+            
+            #writer = () => file.of("downloads").then(
+                (files) => {
+                    // func  ???(file_name, data)
+                    this.#writer = () => Promise.resolve(
+                        files.save_file
+                    );
+                    return files.save_file;
+                }
+            );
+
             
             constructor(tools,info,canvas){
                 this.#tools = tools;
@@ -227,31 +239,45 @@
                             rAF.#snooze,
                             (e) =>{ /*PASS*/ }
                         );
-
-                        //TODO
-
                         
-                        //save sbs vr
-                        ref.#vr_handle(ref.#img).then(
-                            (draw) => draw(img)
-                        ).then(
-                            (vro) => vro.save()
+                        ref.#writer().then(
+                            (fwrite) => {
+                                
+                                //save duobis (default)
+                                let dubois_saver = rAF.#convertToBlob(ref).then(
+                                    (blob) => fwrite(
+                                        `3D_Image [${new Date().getTime()}].png`,
+                                        blob
+                                    )
+                                );
+
+                                let want_vr = ref.#vr_flag.checked;
+                                
+                                //save sbs vr(additional)
+                                let vr_saver = (want_vr) ? ref.#vr_handle(
+                                    ref.#img
+                                ).then(
+                                    (draw) => draw(img)
+                                ).then(
+                                    (vro) => vro.toBlob()
+                                ).then(
+                                    (blob) => fwrite(
+                                        `VR_Image [${new Date().getTime()}]_SBS.png`,
+                                        blob
+                                    )
+                                ) : Promise.resolve();
+
+                                return Promise.all(
+                                    [dubois_saver,vr_saver]
+                                )
+                            }
+                        ).catch(
+                            (__) => alert("failed to keep!")
                         ).finally(
-                            (_) => {
+                            (__) => {
                                 ref.#replace(null);
                                 img?.close();
                                 ref.#vr_handle = () => Promise.reject("no capture");
-                            }
-                        );
-
-                        //save duobis 
-                        ref.#canvas.toBlob(
-                            (blob) => {
-                                if(blob !== null){
-                                    rAF.#download_file(blob);
-                                }else{
-                                    alert("PNG Export Error");
-                                }
                                 ref.#update(
                                     INFO.CAPTURING,
                                     INFO.CAPTURING,
@@ -265,9 +291,9 @@
                                 
                                 ref.#capture = rAF.#no_capture;
                                 rAF.#render(ref);
-                            },
-                            "image/png"
+                            }
                         );
+                    
                     };
                 }
             }
@@ -294,6 +320,22 @@
                         ref.#capture = rAF.#no_capture;
                     };
                 }
+            }
+
+            //for Dubois Anaglyph
+            static #convertToBlob(ref){
+                return new Promise(
+                    (resolve, reject) => ref.#canvas.toBlob(
+                        (blob) => {
+                            if(blob !== null){
+                                return resolve(blob);
+                            }else{
+                                return reject("PNG Export Error");
+                            }
+                        },
+                        "image/png"
+                    )
+                );
             }
             
             static #download_file(blob){
@@ -407,15 +449,13 @@ or click right to cancel.`
                     vr.of(
                         width_full,
                         height_full
-                    ),
-                    file.of("downloads")
+                    )
                 ]
             ).then(
                 (
                     [
                         render,
-                        vr_adapter,
-                        file
+                        vr_adapter
                     ]
                 ) => {
                     let imgc = new ImageCapture(track_full);
