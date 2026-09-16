@@ -69,7 +69,8 @@
                 document.body.addEventListener(
                     "pointerdown",
                     (e) => this.#fclick(e)
-                );  
+                );
+
                 screen.orientation.addEventListener(
                     "change",
                     (e) => {
@@ -79,16 +80,20 @@
                     }
                 );
 
-
-
-
-
-
                 document.body.addEventListener(
                         "visibilitychange",
                         (e) => {
                             if(document.visibilityState === "visible"){
                                 //keep_wake();
+                                /*navigator.wakeLock
+                .request('screen')
+                .then(
+                    (wake_lock) => wake_lock.addEventListener(
+                        "release",
+                        (e) => keep_wake(),
+                        { once: true }
+                    )
+                );*/
                             }else{
                                 //PASS
                             }
@@ -502,16 +507,6 @@ or click right to cancel.`
             }else{
                 document.exitFullscreen();
             }
-            navigator.wakeLock
-                .request('screen')
-                .then(
-                    (wake_lock) => wake_lock.addEventListener(
-                        "release",
-                        (e) => keep_wake(),
-                        { once: true }
-                    )
-                );
-        
         }
         
     </script>
