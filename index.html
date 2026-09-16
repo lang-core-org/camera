@@ -39,7 +39,7 @@
                 () => file.of("downloads").then(
                     (files) => {
                         //re-enter full-screen on landscape mode
-                        keep_wake();
+                        //keep_wake();
                         // func  ???(file_name, data)
                         this.#writer = () => Promise.resolve(
                             files.save_file
