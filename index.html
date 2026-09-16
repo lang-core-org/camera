@@ -168,9 +168,9 @@
             static #forientation(){
                 let type = screen.orientation?.type ?? "";
                 if( type.startsWith("landscape") === true ){
-                    document.body.requestFullscreen();
+                    return document.body.requestFullscreen();
                 }else{
-                    document.exitFullscreen();
+                    return document.exitFullscreen();
                 }
             }
 
@@ -597,7 +597,7 @@ onload="init(
     <canvas id="img_canvas"></canvas>
     <div id="help">❔</div>
     <fieldset id="save">
-        <legend>Also Save as+</legend>
+        <legend>Also Save as</legend>
         <div>
             <input type="checkbox" id="sbs-vr"/>
             <label for="sbs-vr">SBS VR</label>
