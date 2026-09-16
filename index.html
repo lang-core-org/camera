@@ -29,7 +29,7 @@
             #tools;
             #finfo;
             #handle;
-            #fclick;
+            #fpointer;
             #capture;
             #canvas;
             #vr_handle = () => Promise.reject("no capture");
@@ -68,7 +68,7 @@
                 
                 document.body.addEventListener(
                     "pointerdown",
-                    (e) => this.#fclick(e)
+                    (e) => this.#fpointer(e)
                 );
 
                 screen.orientation.addEventListener(
@@ -80,25 +80,7 @@
                     }
                 );
 
-                document.body.addEventListener(
-                        "visibilitychange",
-                        (e) => {
-                            if(document.visibilityState === "visible"){
-                                //keep_wake();
-                                /*navigator.wakeLock
-                .request('screen')
-                .then(
-                    (wake_lock) => wake_lock.addEventListener(
-                        "release",
-                        (e) => keep_wake(),
-                        { once: true }
-                    )
-                );*/
-                            }else{
-                                //PASS
-                            }
-                        }
-                    );
+                rAF.#fwake();
                 
             }
 
@@ -112,10 +94,10 @@
                 left,
                 right,
                 handle,
-                fclick
+                fpointer
             ){
                 this.#handle = handle;
-                this.#fclick = fclick;
+                this.#fpointer = fpointer;
                 this.#finfo(left,right);
             }
             
@@ -165,7 +147,36 @@
                 //PASS
             }
 
-            static #abstract_fclick(ref,left,right){
+            static #fwake(){
+                document.body.addEventListener(
+                    "pointerdown",
+                    (e) => {
+                        navigator.wakeLock.request('screen').then(
+                            (wake_lock) => wake_lock.addEventListener(
+                                "release",
+                                (e) => rAF.#fwake(),
+                                { once: true }
+                            )
+                        );
+                    },
+                    { once: true }
+                );
+            }
+
+            static #fvisible(){
+                document.body.addEventListener(
+                    "visibilitychange",
+                    (e) => {
+                        if(document.visibilityState === "visible"){
+                            
+                        }else{
+                            //PASS
+                        }
+                    }
+                );
+            }
+
+            static #abstract_pointer(ref,left,right){
                 return ({clientX}) => {
                     let half = document.documentElement.clientWidth / 2;
                     if(clientX < half){
@@ -207,7 +218,7 @@
                                 rAF.#draw_left_first(
                                     ref.#img
                                 ),
-                                rAF.#abstract_fclick(
+                                rAF.#abstract_pointer(
                                     ref,
                                     rAF.#capture_cancel,
                                     rAF.#capture_other
@@ -235,7 +246,7 @@
                                 rAF.#draw_right_first(
                                     ref.#img
                                 ),
-                                rAF.#abstract_fclick(
+                                rAF.#abstract_pointer(
                                     ref,
                                     rAF.#capture_other,
                                     rAF.#capture_cancel
@@ -304,7 +315,7 @@
                                     INFO.CAPTURING,
                                     INFO.CAPTURING,
                                     rAF.#original,
-                                    rAF.#abstract_fclick(
+                                    rAF.#abstract_pointer(
                                         ref,
                                         rAF.#capture_left,
                                         rAF.#capture_right
@@ -332,7 +343,7 @@
                             INFO.CAPTURING,
                             INFO.CAPTURING,
                             rAF.#original,
-                            rAF.#abstract_fclick(
+                            rAF.#abstract_pointer(
                                 ref,
                                 rAF.#capture_left,
                                 rAF.#capture_right
