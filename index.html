@@ -37,9 +37,8 @@
             
             #writer = () => file.of("downloads").then(
                 (files) => {
-                    keep_wake();
-
-                    
+                    //re-enter Fullscreen if need
+                    rAF.#forientation();
                     // func  ???(file_name, data)
                     this.#writer = () => Promise.resolve(
                         files.save_file
@@ -77,7 +76,7 @@
                 screen.orientation.addEventListener(
                     "change",
                     (e) => {
-                        keep_wake();
+                        rAF.#forientation();
                         tools.horizon_update_rotation_transform();
                         rAF.#capture_cancel(this);
                     }
@@ -154,6 +153,8 @@
                 document.body.addEventListener(
                     "pointerdown",
                     (e) => {
+                        //re-enter fullScreen if need
+                        rAF.#forientation();
                         navigator.wakeLock.request('screen').then(
                             (wake_lock) => wake_lock.addEventListener(
                                 "release",
@@ -165,7 +166,17 @@
                     { once: true }
                 );
             }
+            
+            static #forientation(){
+                let type = screen.orientation?.type ?? "";
+                if( type.startsWith("landscape") === true ){
+                    document.body.requestFullscreen();
+                }else{
+                    document.exitFullscreen();
+                }
+            }
 
+            //no-used
             static #fvisible(){
                 document.body.addEventListener(
                     "visibilitychange",
@@ -510,17 +521,6 @@ or click right to cancel.`
                     };
                 }
             );
-        }
-
-        function keep_wake(){
-            let type = screen.orientation?.type ?? "";
-            if( type.startsWith("landscape") === true ){
-                document.body.requestFullscreen().catch(
-                    (e) => alert(e)
-                );
-            }else{
-                document.exitFullscreen();
-            }
         }
         
     </script>
