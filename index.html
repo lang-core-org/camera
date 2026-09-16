@@ -285,43 +285,22 @@
                             (e) =>{ /*PASS*/ }
                         );
                         
-                        this.#tools.horizon_unable_show();
-                        
-                        ref.#writer().then(
-                            (fwrite) => {
-                                
-                                //save duobis (default)
-                                let dubois_saver = rAF.#convertToBlob(ref).then(
-                                    (blob) => fwrite(
-                                        `3D_Image [${new Date().getTime()}].png`,
-                                        blob
-                                    )
-                                );
+                        ref.#tools.horizon_unable_show();
 
-                                let want_vr = ref.#vr_flag.checked;
-                                
-                                //save sbs vr(additional)
-                                let vr_saver = (want_vr) ? ref.#vr_handle(
-                                    ref.#img
-                                ).then(
-                                    (draw) => draw(img)
-                                ).then(
-                                    (vro) => vro.toBlob()
-                                ).then(
-                                    (blob) => fwrite(
-                                        `VR_Image [${new Date().getTime()}]_SBS.png`,
-                                        blob
-                                    )
-                                ) : Promise.resolve();
-
-                                return Promise.all(
-                                    [dubois_saver,vr_saver]
-                                );
-                            }
-                        ).catch(
-                            (__) => alert("failed to keep img!")
-                        ).finally(
-                            (__) => {
+                        Promise.allSettled(
+                            [
+                                ref.#writer(),
+                                rAF.#dubois_blob_writer(ref),
+                                rAF.#vr_blob_writer(ref)
+                            ]
+                        ).then(
+                            (
+                                [
+                                    fwrite,
+                                    dubois_blob_writer,
+                                    vr_blob_writer
+                                ]
+                            ) => {
                                 ref.#replace(null);
                                 img?.close();
                                 ref.#vr_handle = () => Promise.reject("no capture");
@@ -335,12 +314,32 @@
                                         rAF.#capture_right
                                     )
                                 );
-
-                                this.#tools.horizon_enable_show();
                                 
+                                ref.#tools.horizon_enable_show();
                                 ref.#capture = rAF.#no_capture;
                                 rAF.#render(ref);
+
+                                
+                                fwrite = fwrite?.value ?? null;
+                                dubois_blob_writer = dubois_blob_writer?.value ?? null;
+                                vr_blob_writer = vr_blob_writer?.value ?? null;
+                                if(
+                                    fwrite === null ||
+                                    dubois_blob_writer === null ||
+                                    vr_blob_writer === null
+                                ){
+                                    return Promise.reject();
+                                }else{
+                                    return Promise.all(
+                                        [
+                                            dubois_blob_writer(fwrite)
+                                            vr_blob_writer(fwrite)
+                                        ]
+                                    );
+                                }     
                             }
+                        ).catch(
+                            (__) => alert("failed to keep img!")
                         );
                     
                     };
@@ -371,16 +370,21 @@
                 }
             }
 
-            /*for Dubois Anaglyph
+            /*for Dubois Anaglyph (default)
             return Promise resolved with 
             Blob blob (image/png) represent what you preview
             */
-            static #convertToBlob(ref){
+            static #dubois_blob_writer(ref){
                 return new Promise(
                     (resolve, reject) => ref.#canvas.toBlob(
                         (blob) => {
                             if(blob !== null){
-                                return resolve(blob);
+                                return resolve(
+                                    (writer) => writer(
+                                        `3D_Image [${new Date().getTime()}].png`,
+                                        blob
+                                    )
+                                );
                             }else{
                                 return reject("PNG Export Error");
                             }
@@ -388,6 +392,24 @@
                         "image/png"
                     )
                 );
+            }
+
+            /*for SBS VR (additional)
+            */
+            static #vr_blob_writer(ref){
+                let want_vr = ref.#vr_flag.checked;
+                return (want_vr) ? ref.#vr_handle(
+                    ref.#img
+                ).then(
+                    (draw) => draw(img)
+                ).then(
+                    (vro) => vro.toBlob()
+                ).then(
+                    (blob) => (writer) => writer(
+                        `VR_Image [${new Date().getTime()}]_SBS.png`,
+                        blob
+                    )
+                ): Promise.resolve( (__) => {} );
             }
         }
 
