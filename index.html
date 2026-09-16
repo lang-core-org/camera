@@ -35,19 +35,16 @@
             #vr_handle = () => Promise.reject("no capture");
             #vr_flag = document.getElementById("sbs-vr");
             
-            #writer = () => document.exitFullscreen().then(
+            #writer = () => document.exitFullscreen().finally(
                 () => file.of("downloads").then(
                     (files) => {
+                        //re-enter full-screen on landscape mode
+                        keep_wake();
                         // func  ???(file_name, data)
                         this.#writer = () => Promise.resolve(
                             files.save_file
                         );
                         return files.save_file;
-                    }
-                ).finally(
-                    (__) => {
-                        //re-enter full-screen on landscape mode
-                        keep_wake();
                     }
                 )
             );
