@@ -211,20 +211,11 @@ class vr{
         }
     }
     /*
-    save img from canvas without clear canvas
+    return Promise with resolved
+    Blob blob represent img in canvas
     */
-    save(){
-        return this.#canvas.convertToBlob().then(
-            (blob) => {
-                let name = `VR_Image [${new Date().getTime()}]_SBS.png`;
-                let url = URL.createObjectURL(blob);
-                let a = document.createElement('a');
-                a.href = url;
-                a.download = name;
-                a.click();
-                URL.revokeObjectURL(url);
-            }
-        );
+    toBlob(){
+        return this.#canvas.convertToBlob();
     }
 
     /*
