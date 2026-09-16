@@ -210,9 +210,10 @@ class vr{
             return Promise.reject("unable to draw right");
         }
     }
+    
     /*
     return Promise with resolved
-    Blob blob represent img in canvas
+    Blob blob (image/png) represent img in canvas
     */
     toBlob(){
         return this.#canvas.convertToBlob();
