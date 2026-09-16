@@ -276,7 +276,7 @@
                                 );
                             }
                         ).catch(
-                            (k) => alert(`failed to keep img! ${JSON.stringify(k)}`)
+                            (__) => alert("failed to keep img!")
                         ).finally(
                             (__) => {
                                 ref.#replace(null);
@@ -504,7 +504,9 @@ or click right to cancel.`
         function keep_wake(){
             let type = screen.orientation?.type ?? "";
             if( type.startsWith("landscape") === true ){
-                document.body.requestFullscreen();
+                document.body.requestFullscreen().catch(
+                    (e) => alert(e);
+                );
             }else{
                 document.exitFullscreen();
             }
@@ -596,7 +598,7 @@ onload="init(
     <canvas id="img_canvas"></canvas>
     <div id="help">❔</div>
     <fieldset id="save">
-        <legend>Also Save as</legend>
+        <legend>Also Save as+</legend>
         <div>
             <input type="checkbox" id="sbs-vr"/>
             <label for="sbs-vr">SBS VR</label>
