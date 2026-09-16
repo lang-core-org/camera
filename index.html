@@ -39,7 +39,7 @@
                 () => file.of("downloads").then(
                     (files) => {
                         //re-enter full-screen on landscape mode
-                        keep_wake();
+                        //keep_wake();
                         // func  ???(file_name, data)
                         this.#writer = () => Promise.resolve(
                             files.save_file
@@ -150,7 +150,7 @@
 
             static #abstract_fclick(ref,left,right){
                 return ({clientX}) => {
-                   // keep_wake();
+                    keep_wake();
                     screen.orientation.addEventListener(
                         "change",
                         (e) => keep_wake()
@@ -594,7 +594,7 @@ onload="init(
     <canvas id="img_canvas"></canvas>
     <div id="help">❔</div>
     <fieldset id="save">
-        <legend>Also Save as+</legend>
+        <legend>Also Save as</legend>
         <div>
             <input type="checkbox" id="sbs-vr"/>
             <label for="sbs-vr">SBS VR</label>
