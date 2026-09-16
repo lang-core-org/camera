@@ -285,6 +285,8 @@
                             (e) =>{ /*PASS*/ }
                         );
                         
+                        this.#tools.horizon_unable_show();
+                        
                         ref.#writer().then(
                             (fwrite) => {
                                 
@@ -333,6 +335,8 @@
                                         rAF.#capture_right
                                     )
                                 );
+
+                                this.#tools.horizon_enable_show();
                                 
                                 ref.#capture = rAF.#no_capture;
                                 rAF.#render(ref);
