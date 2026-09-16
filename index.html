@@ -39,9 +39,7 @@
                 () => file.of("downloads").then(
                     (files) => {
                         //re-enter full-screen on landscape mode
-                        try{
                         keep_wake();
-                        }catch(e){alert(e);}
                         // func  ???(file_name, data)
                         this.#writer = () => Promise.resolve(
                             files.save_file
@@ -275,10 +273,10 @@
 
                                 return Promise.all(
                                     [dubois_saver,vr_saver]
-                                )
+                                );
                             }
                         ).catch(
-                            (__) => alert("failed to keep img!")
+                            (k) => alert(`failed to keep img! ${JSON.stringify(k)}`)
                         ).finally(
                             (__) => {
                                 ref.#replace(null);
