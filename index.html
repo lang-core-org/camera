@@ -153,8 +153,6 @@
                 document.body.addEventListener(
                     "pointerdown",
                     (e) => {
-                        //re-enter fullScreen if need
-                        rAF.#forientation();
                         navigator.wakeLock.request('screen').then(
                             (wake_lock) => wake_lock.addEventListener(
                                 "release",
@@ -599,7 +597,7 @@ onload="init(
     <canvas id="img_canvas"></canvas>
     <div id="help">❔</div>
     <fieldset id="save">
-        <legend>Also Save as</legend>
+        <legend>Also Save as+</legend>
         <div>
             <input type="checkbox" id="sbs-vr"/>
             <label for="sbs-vr">SBS VR</label>
