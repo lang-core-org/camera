@@ -505,7 +505,7 @@ or click right to cancel.`
             let type = screen.orientation?.type ?? "";
             if( type.startsWith("landscape") === true ){
                 document.body.requestFullscreen().catch(
-                    (e) => alert(e);
+                    (e) => alert(e)
                 );
             }else{
                 document.exitFullscreen();
