@@ -77,6 +77,7 @@
                 screen.orientation.addEventListener(
                     "change",
                     (e) => {
+                        keep_wake();
                         tools.horizon_update_rotation_transform();
                         rAF.#capture_cancel(this);
                     }
@@ -149,6 +150,11 @@
 
             static #abstract_fclick(ref,left,right){
                 return ({clientX}) => {
+                    keep_wake();
+                    screen.orientation.addEventListener(
+                        "change",
+                        (e) => keep_wake()
+                    );
                     let half = document.documentElement.clientWidth / 2;
                     if(clientX < half){
                         left(ref);
@@ -362,16 +368,6 @@
             ).then(
                 (tools) => {
                     let c = new rAF(tools,info,canvas);
-
-                    document.body.addEventListener(
-                        "pointerdown",
-                        (e) => keep_wake()
-                    );  
-                    
-                    screen.orientation.addEventListener(
-                        "change",
-                        (e) => keep_wake()
-                    );
                     
                     document.body.addEventListener(
                         "visibilitychange",
