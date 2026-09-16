@@ -150,7 +150,7 @@
 
             static #abstract_fclick(ref,left,right){
                 return ({clientX}) => {
-                    keep_wake();
+                   // keep_wake();
                     screen.orientation.addEventListener(
                         "change",
                         (e) => keep_wake()
