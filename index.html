@@ -37,6 +37,8 @@
             
             #writer = () => file.of("downloads").then(
                 (files) => {
+                    keep_wake(); //re-enter full-screen on landscape mode
+                    
                     // func  ???(file_name, data)
                     this.#writer = () => Promise.resolve(
                         files.save_file
@@ -322,7 +324,10 @@
                 }
             }
 
-            //for Dubois Anaglyph
+            /*for Dubois Anaglyph
+            return Promise resolved with 
+            Blob blob (image/png) represent what you preview
+            */
             static #convertToBlob(ref){
                 return new Promise(
                     (resolve, reject) => ref.#canvas.toBlob(
@@ -337,18 +342,6 @@
                     )
                 );
             }
-            
-            static #download_file(blob){
-                let name = 
-                    `3D_Image [${new Date().getTime()}].png`;
-                let url = URL.createObjectURL(blob);
-                let a = document.createElement('a');
-                a.href = url;
-                a.download = name;
-                a.click();
-                URL.revokeObjectURL(url);
-            }
-            
         }
 
         function init(canvas,info,horizon,save,help){
