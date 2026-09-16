@@ -350,16 +350,16 @@
                     save.addEventListener(
                         "pointerdown",
                         (e) => e.stopPropagation()
-                    );  
-
-                    let fhelp = (start,end) => {
-                        help.addEventListener(
-                            start,
-                            (e) => {
-                                e.preventDefault();
-                                tools.horizon_unable_show();
-                                let old_info = replace_info(
-                                    info,
+                    ); 
+                    
+                    help.addEventListener(
+                        "pointerdown",
+                        (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            tools.horizon_unable_show();
+                            let old_info = replace_info(
+                                info,
 `\
 click left first to capture left,
 then click right to capture right and save photo,
@@ -367,20 +367,19 @@ or click left to cancel.
 click right first to capture right,
 then click left to capture left and save photo,
 or click right to cancel.`
-                                );
-                                help.addEventListener(
-                                    end,
-                                    (e) => {
-                                        replace_info(info,old_info);
-                                        tools.horizon_enable_show();
-                                    },
-                                    { once:true }
-                                );
-                            }
-                        );
-                    };
-
-                    fhelp("pointerdown","pointerup");
+                            );
+                            help.addEventListener(
+                                "pointerup",
+                                (e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    replace_info(info,old_info);
+                                    tools.horizon_enable_show();
+                                },
+                                { once:true }
+                            );
+                        }
+                    );
                     
                 }
         ).catch(
