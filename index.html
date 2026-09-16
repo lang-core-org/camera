@@ -82,6 +82,22 @@
                         rAF.#capture_cancel(this);
                     }
                 );
+
+
+
+
+
+
+                document.body.addEventListener(
+                        "visibilitychange",
+                        (e) => {
+                            if(document.visibilityState === "visible"){
+                                //keep_wake();
+                            }else{
+                                //PASS
+                            }
+                        }
+                    );
                 
             }
 
@@ -367,17 +383,6 @@
             ).then(
                 (tools) => {
                     let c = new rAF(tools,info,canvas);
-                    
-                    document.body.addEventListener(
-                        "visibilitychange",
-                        (e) => {
-                            if(document.visibilityState === "visible"){
-                                keep_wake();
-                            }else{
-                                //PASS
-                            }
-                        }
-                    );
 
                     save.addEventListener(
                         "pointerdown",
