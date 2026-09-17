@@ -440,6 +440,7 @@
                         (e) => {
                             e.preventDefault();
                             e.stopPropagation();
+                            help.setPointerCapture(e.pointerId);
                             tools.horizon_unable_show();
                             let old_info = replace_info(
                                 info,
@@ -451,14 +452,21 @@ click right first to capture right,
 then click left to capture left and save photo,
 or click right to cancel.`
                             );
-                            document.body.addEventListener(
+                            let release = (e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                help.releasePointerCapture(e.pointerId);
+                                replace_info(info,old_info);
+                                tools.horizon_enable_show();
+                            };
+                            help.addEventListener(
                                 "pointerup",
-                                (e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    replace_info(info,old_info);
-                                    tools.horizon_enable_show();
-                                },
+                                release,
+                                { once:true }
+                            );
+                            help.addEventListener(
+                                "pointercancel",
+                                release,
                                 { once:true }
                             );
                         }
