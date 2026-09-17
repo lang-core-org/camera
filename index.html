@@ -291,7 +291,7 @@
                             [
                                 ref.#writer(),
                                 rAF.#dubois_blob_writer(ref),
-                                rAF.#vr_blob_writer(ref)
+                                rAF.#vr_blob_writer(ref,img)
                             ]
                         ).then(
                             (
@@ -396,7 +396,7 @@
 
             /*for SBS VR (additional)
             */
-            static #vr_blob_writer(ref){
+            static #vr_blob_writer(ref,img){
                 let want_vr = ref.#vr_flag.checked;
                 return (want_vr) ? ref.#vr_handle(
                     ref.#img
