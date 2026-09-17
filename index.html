@@ -456,6 +456,7 @@ or click right to cancel.`
                                 e.preventDefault();
                                 e.stopPropagation();
                                 help.releasePointerCapture(e.pointerId);
+                                alert(old_info);
                                 replace_info(info,old_info);
                                 tools.horizon_enable_show();
                             };
