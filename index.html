@@ -82,6 +82,8 @@
                     }
                 );
 
+                rAF.#fvisible();
+
                 rAF.#fwake();
                 
             }
@@ -150,18 +152,12 @@
             }
 
             static #fwake(){
-                document.body.addEventListener(
-                    "pointerdown",
-                    (e) => {
-                        navigator.wakeLock.request('screen').then(
-                            (wake_lock) => wake_lock.addEventListener(
-                                "release",
-                                (e) => rAF.#fwake(),
-                                { once: true }
-                            )
-                        );
-                    },
-                    { once: true }
+                navigator.wakeLock.request('screen').then(
+                    (wake_lock) => wake_lock.addEventListener(
+                        "release",
+                        (e) => rAF.#fwake(),
+                        { once: true }
+                    )
                 );
             }
             
@@ -173,14 +169,13 @@
                     return document.exitFullscreen();
                 }
             }
-
-            //no-used
+            
             static #fvisible(){
                 document.body.addEventListener(
                     "visibilitychange",
                     (e) => {
                         if(document.visibilityState === "visible"){
-                            
+                            rAF.#fwake();
                         }else{
                             //PASS
                         }
