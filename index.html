@@ -334,7 +334,7 @@
                                 }     
                             }
                         ).catch(
-                            (__) => alert("failed to keep img!")
+                            (__) => dialog.notice("failed to keep img!")
                         );
                     
                     };
@@ -470,7 +470,7 @@ or click right to cancel.`
                 }
         ).catch(
                 (err) => {
-                    alert(`Catch the Fatal Error:\n${err}`);
+                    dialog.notice(`Catch the Fatal Error:\n${err}`);
                 }
             );
 
@@ -556,6 +556,7 @@ or click right to cancel.`
     <script src="vr.js"></script>
     <script src="horizon.js"></script>
     <script src="https://lang-core.org/file.js"></script>
+    <script src="https://lang-core.org/dialog.js"></script>
     <style>
         canvas,#info,#horizon{
             position: fixed;
