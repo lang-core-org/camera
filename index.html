@@ -513,7 +513,7 @@ or click right to cancel.`
                     return {
                         gFrame: (f)  => imgc.grabFrame().then(f).catch(
                             (err) => {
-                                alert(`Cannot Capture an Image from the Camera, due to:\n${err}`);
+                                dialog.notice(`Cannot Capture an Image from the Camera, due to:\n${err}`);
                             }
                         ),
                         preview_2d: draw_2d,
