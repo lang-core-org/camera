@@ -1,5 +1,8 @@
 /*framework by me, cowork with Cluade*/
 class geolocation{
+  /*
+  original list
+  */
   #loc = [];
 
   /*
@@ -30,12 +33,28 @@ class geolocation{
   }
 
   /*
-  return Promise.allSettled of cloned list
-  clean original list
+  write summary location of locs into png_blob
   */
-  using_loc(){
+  using_loc(png_blob){
     let clone = Array.from(this.#loc);
-    this.#loc = [];
-    return Promise.allSettled(clone);
+    return Promise.allSettled(clone).then(
+      (locs) => this.write_loc(locs,png_blob)
+    );
   }
+
+  /*
+  clear original list
+  */
+  clear_loc(){
+    this.#loc = [];
+  }
+
+  /*
+  really writer,
+  return modified png_blob
+  */
+  write_loc(locs,png_blob){
+    
+  }
+  
 }
