@@ -1,5 +1,5 @@
 /*framework by me, cowork with Cluade*/
-class location{
+class geolocation{
   #loc = [];
 
   /*
