@@ -1,10 +1,10 @@
 /*framework by me, cowork with Cluade*/
 class location{
-  /* foreach element in #loc :
-     undefined 
-  */
   #loc = [];
-  
+
+  /*
+  append Promise of location into original list
+  */
   append_loc(){
     this.#loc.push(
       new Promise(
@@ -29,6 +29,10 @@ class location{
     );
   }
 
+  /*
+  return Promise.allSettled of cloned list
+  clean original list
+  */
   using_loc(){
     let clone = Array.from(this.#loc);
     this.#loc = [];
