@@ -218,7 +218,7 @@
                         if(img === null){
                             //PASS
                         }else{
-                            this.#geolocation.append_loc();
+                            ref.#geolocation.append_loc();
                             
                             ref.#replace(img);
                             ref.#vr_handle = ref.#tools.vr_adapter.draw_left;
@@ -248,7 +248,7 @@
                         if(img === null){
                             //PASS
                         }else{
-                            this.#geolocation.append_loc();
+                            ref.#geolocation.append_loc();
                             
                             ref.#replace(img);
                             ref.#vr_handle = ref.#tools.vr_adapter.draw_right;
@@ -278,7 +278,7 @@
                     //PASS
                 }else{
                     ref.#capture = (ref,img = null) => {
-                        this.#geolocation.append_loc();
+                        ref.#geolocation.append_loc();
                         
                         ref.#update(
                             INFO.CAPTURED,
@@ -303,7 +303,7 @@
                                     vr_blob_writer
                                 ]
                             ) => {
-                                this.#geolocation.clear_loc();
+                                ref.#geolocation.clear_loc();
                                 
                                 ref.#replace(null);
                                 img?.close();
@@ -355,7 +355,7 @@
                     //PASS
                 }else{
                     ref.#capture = (ref,img = null) => {
-                        this.#geolocation.clear_loc();
+                        ref.#geolocation.clear_loc();
                         
                         ref.#vr_handle = () => Promise.reject("no capture");
                         ref.#replace(null);
@@ -386,7 +386,7 @@
                         (blob) => {
                             if(blob !== null){
                                 return resolve(
-                                    this.#geolocation.using_loc(blob)
+                                    ref.#geolocation.using_loc(blob)
                                 );
                             }else{
                                 return reject("PNG Export Error");
@@ -416,7 +416,7 @@
                 ).then(
                     (vro) => vro.toBlob()
                 ).then(
-                    (blob) => this.#geolocation.using_loc(blob)
+                    (blob) => ref.#geolocation.using_loc(blob)
                 ).then(
                     (geoblob) => (writer) => writer(
                         `VR_Image [${new Date().getTime()}]_SBS.png`,
