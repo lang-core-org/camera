@@ -320,6 +320,10 @@
                                 );
                                 
                                 ref.#tools.horizon_enable_show();
+                                
+                                dialog.notice(document.hasFocus());
+
+                                
                                 ref.#capture = rAF.#no_capture;
                                 rAF.#render(ref);
 
