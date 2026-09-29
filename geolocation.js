@@ -1,25 +1,50 @@
 /*framework by me, cowork with Cluade*/
 class geolocation{
   /*
+  debug switch: true = alert() diagnostics, false = silent
+  */
+  static #debug = true;
+
+  static #say(msg){
+    if(geolocation.#debug === true){
+      alert(`[geolocation]\n${msg}`);
+    }
+  }
+
+  /*
   original list
   */
   #loc = [];
 
   /*
+  timing info of each request, parallel to #loc
+  */
+  #meta = [];
+
+  /*
   append Promise of location into original list
   */
   append_loc(){
+    const m = { t0: performance.now(), ms: null };
+    this.#meta.push(m);
     this.#loc.push(
       new Promise(
         (resolve, reject) => {
           if (navigator.geolocation === undefined){
+            m.ms = 0;
             reject(
               new Error("unable to locate")
             );
           }else{
             navigator.geolocation.getCurrentPosition(
-              resolve,
-              reject,
+              (pos) => {
+                m.ms = performance.now() - m.t0;
+                resolve(pos);
+              },
+              (err) => {
+                m.ms = performance.now() - m.t0;
+                reject(err);
+              },
               {
                 enableHighAccuracy: true,
                 timeout: 3000,
@@ -38,8 +63,17 @@ class geolocation{
   */
   using_loc(png_blob){
     let clone = Array.from(this.#loc);
-    return Promise.allSettled(clone).then(
-      (locs) => this.#write_loc(locs,png_blob)
+    let meta = Array.from(this.#meta);
+    return Promise.all(
+      [
+        Promise.allSettled(clone),
+        geolocation.#permission()
+      ]
+    ).then(
+      ([locs, perm]) => {
+        geolocation.#report(locs, meta, perm);
+        return this.#write_loc(locs,png_blob);
+      }
     );
   }
 
@@ -48,6 +82,7 @@ class geolocation{
   */
   clear_loc(){
     this.#loc = [];
+    this.#meta = [];
   }
 
   /*
@@ -57,10 +92,12 @@ class geolocation{
   always return Promise of png_blob
   */
   async #write_loc(locs,png_blob){
-    if (
-      locs.length !== 2 ||
-      !locs.every((r) => r.status === "fulfilled")
-    ){
+    if (locs.length !== 2){
+      geolocation.#say(`NOT written: requests = ${locs.length} (need exactly 2)`);
+      return png_blob;
+    }
+    if (!locs.every((r) => r.status === "fulfilled")){
+      geolocation.#say("NOT written: at least one request failed");
       return png_blob;
     }
 
@@ -73,12 +110,16 @@ class geolocation{
     const y = p[1] + q[1];
     const z = p[2] + q[2];
     if (Math.hypot(x, y, z) < 1e-12){
-      return png_blob;   // antipodal: no unique midpoint
+      geolocation.#say("NOT written: antipodal points, no unique midpoint");
+      return png_blob;
     }
     const [lat, lon] = geolocation.#to_lat_lon(x, y, z);
 
     const src = new Uint8Array(await png_blob.arrayBuffer());
     if (!geolocation.#is_png(src)){
+      geolocation.#say(
+        `NOT written: not a png (type=${png_blob.type}, size=${png_blob.size})`
+      );
       throw new Error("not a png");
     }
 
@@ -88,7 +129,51 @@ class geolocation{
     out.set(src.subarray(0, at), 0);
     out.set(chunk, at);
     out.set(src.subarray(at), at + chunk.length);
+
+    geolocation.#say(
+      `WRITTEN: ${lat.toFixed(7)}, ${lon.toFixed(7)}\n` +
+      `size ${src.length} -> ${out.length} bytes`
+    );
     return new Blob([out], { type: "image/png" });
+  }
+
+  /* ================= debug helpers ================= */
+
+  /*
+  Promise of permission state: "granted" / "prompt" / "denied" / "n/a" / "error:..."
+  */
+  static #permission(){
+    const q = navigator.permissions?.query({ name: "geolocation" });
+    return q === undefined
+      ? Promise.resolve("n/a")
+      : q.then((s) => s.state).catch((e) => `error:${e}`);
+  }
+
+  /*
+  one alert with the result of every request
+  */
+  static #report(locs, meta, perm){
+    const lines = locs.map(
+      (r, i) => {
+        const ms = meta[i]?.ms;
+        const t = (ms === null || ms === undefined) ? "?" : Math.round(ms);
+        if (r.status === "fulfilled"){
+          const c = r.value.coords;
+          return `#${i} OK ${t}ms ` +
+                 `${c.latitude.toFixed(6)}, ${c.longitude.toFixed(6)} ` +
+                 `±${Math.round(c.accuracy)}m`;
+        }else{
+          const e = r.reason;
+          return `#${i} FAIL ${t}ms code=${e?.code} ${e?.message ?? e}`;
+        }
+      }
+    );
+    geolocation.#say(
+      `secure=${window.isSecureContext} permission=${perm}\n` +
+      `requests=${locs.length}\n` +
+      (lines.join("\n") || "(empty)") +
+      `\n\ncode: 1=denied 2=unavailable 3=timeout`
+    );
   }
 
   /* ================= helpers ================= */
