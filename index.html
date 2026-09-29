@@ -385,9 +385,7 @@
                     (resolve, reject) => ref.#canvas.toBlob(
                         (blob) => {
                             if(blob !== null){
-                                return resolve(
-                                    ref.#geolocation.using_loc(blob)
-                                );
+                                return resolve(blob);
                             }else{
                                 return reject("PNG Export Error");
                             }
@@ -395,13 +393,13 @@
                         "image/png"
                     )
                 ).then(
-                    (geoblob_promise) => geoblob_promise.then(
-                        (geoblob) =>
-                            (writer) => writer(
-                                `3D_Image [${new Date().getTime()}].png`,
-                                geoblob
-                            )
-                    )
+                    (blob) => ref.#geolocation.using_loc(blob)
+                ).then(
+                    (geoblob) => 
+                        (writer) => writer(
+                            `3D_Image [${new Date().getTime()}].png`,
+                            geoblob
+                        )
                 );
             }
 
