@@ -52,7 +52,13 @@ NOTE: Saved photos include location info,
                     }
                 ).catch(
                     (___) => {
-                        this.#writer = Promise.reject();
+                        this.#writer = new Promise(
+                            (resolve, reject) => setTimeout(
+                                () => reject(),
+                                3000
+                            )
+                        ); //Promise.reject();
+                        
                         dialog.notice(
                             `Photos will not be saved.`
                         );
