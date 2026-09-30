@@ -36,17 +36,31 @@
             #vr_handle = () => Promise.reject("no capture");
             #vr_flag = document.getElementById("sbs-vr");
             
-            #writer = () => file.of("downloads").then(
-                (files) => {
-                    //re-enter Fullscreen if need
-                    rAF.#forientation();
-                    // func  ???(file_name, data)
-                    this.#writer = () => Promise.resolve(
-                        files.save_file
-                    );
-                    return files.save_file;
-                }
-            );
+            #writer = () => {
+                dialog.ask("save photos?").then(
+                    () => file.of("downloads")
+                ).then(
+                    (files) => {
+                        this.#writer = Promise.resolve(
+                            files.save_file
+                        );
+                        dialog.notice(
+`Photos will be saved.
+NOTE: Saved photos include location info,
+      which may take a long time to get.`
+                        );
+                    }
+                ).catch(
+                    (___) => {
+                        this.#writer = Promise.reject();
+                        dialog.notice(
+                            `Photos will not be saved.`
+                        );
+                    }
+                ).finally(
+                    () => rAF.#forientation()
+                );
+            };
 
             
             constructor(tools,info,canvas){
@@ -68,6 +82,8 @@
                 
                 this.#capture = rAF.#no_capture;
                 rAF.#render(this);
+                
+                this.#writer(); //init writer
                 
                 document.body.addEventListener(
                     "pointerdown",
@@ -289,12 +305,14 @@
                         
                         ref.#tools.horizon_unable_show();
 
-                        Promise.allSettled(
-                            [
-                                ref.#writer(),
-                                rAF.#dubois_blob_writer(ref),
-                                rAF.#vr_blob_writer(ref,img)
-                            ]
+                        ref.#writer.then(
+                            (fwrite) => Promise.allSettled(
+                                [
+                                    fwrite,
+                                    rAF.#dubois_blob_writer(ref),
+                                    rAF.#vr_blob_writer(ref,img)
+                                ]
+                            )
                         ).then(
                             (
                                 [
@@ -303,6 +321,28 @@
                                     vr_blob_writer
                                 ]
                             ) => {
+                                fwrite = fwrite?.value ?? null;
+                                dubois_blob_writer = dubois_blob_writer?.value ?? null;
+                                vr_blob_writer = vr_blob_writer?.value ?? null;
+                                
+                                let future = (
+                                    fwrite === null ||
+                                    dubois_blob_writer === null ||
+                                    vr_blob_writer === null
+                                ) ? Promise.reject() 
+                                  : Promise.all(
+                                      [
+                                          dubois_blob_writer(fwrite),
+                                          vr_blob_writer(fwrite)
+                                      ]
+                                  );
+
+                                return future.catch(
+                                    (__) => dialog.notice("failed to save photo")
+                                );
+                            }
+                        ).finally(
+                            () => {
                                 ref.#geolocation.clear_loc();
                                 
                                 ref.#replace(null);
@@ -321,33 +361,9 @@
                                 
                                 ref.#tools.horizon_enable_show();
                                 
-                                window.focus();
-
-                                
                                 ref.#capture = rAF.#no_capture;
                                 rAF.#render(ref);
-
-                                
-                                fwrite = fwrite?.value ?? null;
-                                dubois_blob_writer = dubois_blob_writer?.value ?? null;
-                                vr_blob_writer = vr_blob_writer?.value ?? null;
-                                if(
-                                    fwrite === null ||
-                                    dubois_blob_writer === null ||
-                                    vr_blob_writer === null
-                                ){
-                                    return Promise.reject();
-                                }else{
-                                    return Promise.all(
-                                        [
-                                            dubois_blob_writer(fwrite),
-                                            vr_blob_writer(fwrite)
-                                        ]
-                                    );
-                                }     
                             }
-                        ).catch(
-                            (__) => dialog.notice("failed to keep img!")
                         );
                     
                     };
