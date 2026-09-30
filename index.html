@@ -57,8 +57,6 @@ NOTE: Saved photos include location info,
                             `Photos will not be saved.`
                         );
                     }
-                ).finally(
-                    () => rAF.#forientation()
                 );
             };
 
@@ -82,26 +80,31 @@ NOTE: Saved photos include location info,
                 
                 this.#capture = rAF.#no_capture;
                 rAF.#render(this);
-                
-                this.#writer(); //init writer
-                
-                document.body.addEventListener(
-                    "pointerdown",
-                    (e) => this.#fpointer(e)
-                );
-
-                screen.orientation.addEventListener(
-                    "change",
-                    (e) => {
-                        rAF.#forientation();
-                        tools.horizon_update_rotation_transform();
-                        rAF.#capture_cancel(this);
-                    }
-                );
 
                 rAF.#fvisible();
 
                 rAF.#fwake();
+                
+                this.#writer().finally(
+                    () => {
+                        rAF.#forientation();
+                        
+                        document.body.addEventListener(
+                            "pointerdown",
+                            (e) => this.#fpointer(e)
+                        );
+                        screen.orientation.addEventListener(
+                            "change",
+                            (e) => {
+                                rAF.#forientation();
+                                tools.horizon_update_rotation_transform();
+                                rAF.#capture_cancel(this);
+                            }
+                        );
+                    }
+                );
+                
+                
                 
             }
 
