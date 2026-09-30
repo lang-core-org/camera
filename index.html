@@ -52,12 +52,7 @@ NOTE: Saved photos include location info,
                     }
                 ).catch(
                     (___) => {
-                        this.#writer = new Promise(
-                            (resolve, reject) => setTimeout(
-                                () => reject(),
-                                3000
-                            )
-                        ); //Promise.reject();
+                        this.#writer = Promise.reject();
                         
                         dialog.notice(
                             `Photos will not be saved.`
@@ -346,7 +341,7 @@ NOTE: Saved photos include location info,
                                 );
                             }
                         ).catch(
-                            (__) => null
+                            (__) => dialog.notice("photo will be discard")
                         ).finally(
                             () => {
                                 ref.#geolocation.clear_loc();
@@ -483,10 +478,10 @@ NOTE: Saved photos include location info,
                                 info,
 `\
 click left first to capture left,
-then click right to capture right and save photo,
+then click right to capture right and save photo if available,
 or click left to cancel.
 click right first to capture right,
-then click left to capture left and save photo,
+then click left to capture left and save photo if available,
 or click right to cancel.`
                             );
                             let release = (e) => {
