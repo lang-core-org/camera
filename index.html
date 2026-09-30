@@ -344,6 +344,8 @@ NOTE: Saved photos include location info,
                                     (__) => dialog.notice("failed to save photo")
                                 );
                             }
+                        ).catch(
+                            (__) => null
                         ).finally(
                             () => {
                                 ref.#geolocation.clear_loc();
