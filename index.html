@@ -37,7 +37,7 @@
             #vr_flag = document.getElementById("sbs-vr");
             
             #writer = () => {
-                dialog.ask("save photos?").then(
+                return dialog.ask("save photos?").then(
                     () => file.of("downloads")
                 ).then(
                     (files) => {
@@ -103,8 +103,6 @@ NOTE: Saved photos include location info,
                         );
                     }
                 );
-                
-                
                 
             }
 
