@@ -79,7 +79,7 @@ NOTE: Saved photos include location info,
                 );
                 
                 this.#capture = rAF.#no_capture;
-                rAF.#render(this);
+                rAF.#next_render(this);
 
                 rAF.#fvisible();
 
@@ -218,9 +218,6 @@ NOTE: Saved photos include location info,
                 requestAnimationFrame(
                     () => ref.#handle(ref)
                 );
-            }
-            static #render(ref){
-                ref.#handle(ref);
             }
 
             static #no_capture(ref,img = null){
@@ -365,7 +362,7 @@ NOTE: Saved photos include location info,
                                 ref.#tools.horizon_enable_show();
                                 
                                 ref.#capture = rAF.#no_capture;
-                                rAF.#render(ref);
+                                rAF.#next_render(ref);
                             }
                         );
                     
